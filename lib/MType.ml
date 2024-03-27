@@ -4,3 +4,17 @@ type mtype =
   | Fire
   | Water
   | Grass
+  | Ice
+  | Steel
+  | Dragon
+  | Fairy
+  | Rock
+  | Ground
+  | Flying
+  | Poison
+  | Bug
+  | Dark
+  | Psychic
+  | Fighting
+  | Electric
+  | Ghost
