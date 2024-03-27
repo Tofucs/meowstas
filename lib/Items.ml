@@ -1,0 +1,3 @@
+type items = 
+  | LifeOrb
+  | MegaStone
