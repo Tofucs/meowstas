@@ -1,0 +1,12 @@
+1. Download the project
+2. Open terminal in the root folder of meowstas
+3. Run [dune exec meowstas] to start the game
+4. It will show something like this 
+
+[A wild Bulbasaur appears!           
+1: Thunder Shock
+2: Quick Attack
+Choose a move (type number):]
+
+5. Inputting 1 will choose attack 1, and 2 chooses attack 2
+6. Play until either you or the AI pokemon dies, then the game is over and you have to run exec again

@@ -9,13 +9,11 @@ type t = {
   ability : abilities;
   mutable level : int;
   mutable item : items;
-
   mutable hp : int;
   mutable attack : int;
   mutable defense : int;
   mutable speed : int;
-
-  moveset : moves array
+  moveset : moves array;
 }
 
-val attack : t -> t -> moves -> t
+val attack : t -> t -> moves -> unit
