@@ -1,0 +1,32 @@
+---
+# Members of your group.
+group:
+  - name: Raymond Lin
+    netid: rpl67
+  - name: Maggie Gao
+    netid: mg2447
+  - name: Ashlie Zhang
+    netid: az468
+  - name: Andrew Hu
+    netid: ajh365
+  - name: Anthony Wong
+    netid: ajw284
+# Your PM.
+pm:
+  name: Lukman Moyosore
+  netid: lom4
+# Set to false if you don't want your gallery entry to be public.
+publish: false
+# Pithy title
+title: "Meowstas: Cat Pokemon"
+# OK if this is a Cornell Github link, but public gallery viewers won't be able to see it.
+git-repo: "https://github.com/Tofucs/meowstas"
+# If you have no demo screencast, replace the url string with an empty string ""
+demo-video-url: ""
+# Write a short, attention-grabbing description of your project.
+desc: >
+  Our project is a cat pokemon game where players can collect cat-pokemon and battle with gym leaders.
+  The gym leaders are AI bots that choose attacks semi-randomly.
+  Pokemon also have status effects that can be inflicted on them by attacks, and there are items that heal or buff pokemon.
+
+  Currently, it is completely terminal based, but in the future, we are looking to create a GUI.
