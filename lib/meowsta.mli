@@ -3,30 +3,19 @@ open Abilities
 open Moves
 open Items
 
+type t = {
+  name : string;
+  poke_type : mtype * mtype;
+  ability : abilities;
+  mutable level : int;
+  mutable item : items;
 
+  mutable hp : int;
+  mutable attack : int;
+  mutable defense : int;
+  mutable speed : int;
 
-module type PokemonType = sig
-  val name : string
-  val poke_type : mtype * mtype
-  val ability : abilities
-  val level : int ref
-  val item : items ref
+  moveset : moves array
+}
 
-  val base_hp : int ref
-  val base_attack : int ref
-  val base_defence : int ref
-  val base_speed : int ref
-
-  val moveset : moves array
-end
-
-module type PokemonSig = sig
-  include PokemonType
-
-
-  val attack : moves -> int
-end
-
-module Make (P : PokemonType) : PokemonSig 
-
-
+val attack : t -> t -> moves -> t
