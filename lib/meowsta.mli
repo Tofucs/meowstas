@@ -17,3 +17,4 @@ type t = {
 }
 
 val attack : t -> t -> moves -> unit
+val is_dead : t -> bool
