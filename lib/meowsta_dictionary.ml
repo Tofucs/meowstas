@@ -18,6 +18,20 @@ let meowberger =
     moveset = [| water_gun; tackle; no; no |];
   }
 
+let clawson =
+  {
+    name = "Purrfesor Meowchael Clawson";
+    poke_type = (Ground, Dragon);
+    ability = NO;
+    level = 5;
+    item = NO;
+    hp = 100;
+    attack = 14;
+    defense = 10;
+    speed = 8;
+    moveset = [| water_gun; tackle; no; no |];
+  }
+
 let weak_meowberger = { meowberger with hp = 0 }
 
 let meowtter =

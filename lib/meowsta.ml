@@ -17,11 +17,16 @@ type t = {
 }
 
 let attack attacker defender move =
+  let base_damage =
+    float_of_int attacker.attack
+    /. float_of_int defender.defense
+    *. float_of_int move.damage
+  in
   defender.hp <-
     float_of_int defender.hp
-    -. float_of_int attacker.attack
-       /. float_of_int defender.defense
-       *. float_of_int move.damage
+    -. base_damage
+       *. type_multiplier move.attack_type (fst defender.poke_type)
+       *. type_multiplier move.attack_type (snd defender.poke_type)
     |> int_of_float
 
 let is_dead pokemon = if pokemon.hp <= 0 then true else false
