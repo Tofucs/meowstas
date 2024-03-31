@@ -1,5 +1,15 @@
 open Meowsta
 open Moves
+open MType
+
+let check_effective (move : moves) (enemy_pokemon : t) =
+  let multiplier =
+    type_multiplier move.attack_type (fst enemy_pokemon.poke_type)
+    *. type_multiplier move.attack_type (snd enemy_pokemon.poke_type)
+  in
+  if multiplier >= 2. then print_endline "It's super effective!"
+  else if multiplier < 1. then print_endline "It's not very effective"
+  else print_endline ""
 
 let rec battle_loop player_pokemon enemy_pokemon =
   if is_dead player_pokemon then
@@ -18,11 +28,13 @@ let rec battle_loop player_pokemon enemy_pokemon =
     let () = attack player_pokemon enemy_pokemon chosen_move in
     Printf.printf "%s used %s! %s's HP is now %d\n" player_pokemon.name
       chosen_move.name enemy_pokemon.name enemy_pokemon.hp;
+    check_effective chosen_move enemy_pokemon;
 
     let enemy_move = enemy_pokemon.moveset.(0) in
     let () = attack enemy_pokemon player_pokemon enemy_move in
     Printf.printf "%s used %s! %s's HP is now %d\n\n" enemy_pokemon.name
       enemy_move.name player_pokemon.name player_pokemon.hp;
+    check_effective enemy_move player_pokemon;
 
     battle_loop player_pokemon enemy_pokemon
   end
