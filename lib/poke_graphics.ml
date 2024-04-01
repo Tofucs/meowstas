@@ -22,10 +22,13 @@ let draw_centered_string x y text =
 let draw_interface pokemon =
   set_color text_color;
   set_line_width 8;
+  (*Drawing Border*)
   draw_rect 0 0 (size_x () - 1) (size_y () - 1);
   moveto 0 (height / 3);
   set_line_width 3;
   lineto width (height / 3);
+
+  (*Drawing all of the rectangles and components*)
   let poke_string = "What will " ^ pokemon ^ " do?" in
   draw_centered_string (width / 2) ((height / 3) - 50) poke_string;
   set_color option_color;
