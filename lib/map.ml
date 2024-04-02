@@ -6,13 +6,23 @@ type map = {
   grid : tile array array;
   mutable player_pos : int option * int option;
   size : int * int;
+  mutable player : player;
 }
-(**RI: All tile arrays within this array are the same length*)
+(**RI: All tile arrays within grid are the same length. AF: A 2D-array of tiles
+   of x length, and each array is y length, represents a xy-coordinate grid of
+   size x*y. 0,0 is the top left grid tile, and x,y is the bottom right grid
+   tile.*)
 
 exception PlayerUninstantiated
 
 let make () name grid (width, height) =
-  { area_name = name; grid; player_pos = (None, None); size = (width, height) }
+  {
+    area_name = name;
+    grid;
+    player_pos = (None, None);
+    size = (width, height);
+    player = Player.make ();
+  }
 
 let create_player map (start_pos : int option * int option) =
   map.player_pos <- start_pos
@@ -38,6 +48,7 @@ let update_location map attempt_move =
   | _, None -> raise PlayerUninstantiated
   | Some _, Some _ -> (
       match attempt_move with
+      | Idle -> ()
       | Up ->
           let curr = get_player_pos map in
           let next = (fst curr, Some (extract_int (snd curr) + 1)) in
@@ -45,10 +56,10 @@ let update_location map attempt_move =
             match query_tile map next with
             | W -> map.player_pos <- next
             | NW ->
-                failwith
-                  "TODO" (*don't change location as attempted move is blocked*)
+                map.player.state <-
+                  North (*don't change location as attempted move is blocked*)
             | IW -> map.player_pos <- next
-            | INW -> failwith "TODO"
+            | INW -> map.player.state <- North
           in
           move
       | Down ->
@@ -57,9 +68,9 @@ let update_location map attempt_move =
           let move =
             match query_tile map next with
             | W -> map.player_pos <- next
-            | NW -> failwith "TODO"
+            | NW -> map.player.state <- South
             | IW -> map.player_pos <- next
-            | INW -> failwith "TODO"
+            | INW -> map.player.state <- South
           in
           move
       | Left ->
@@ -68,9 +79,9 @@ let update_location map attempt_move =
           let move =
             match query_tile map next with
             | W -> map.player_pos <- next
-            | NW -> failwith "TODO"
+            | NW -> map.player.state <- West
             | IW -> map.player_pos <- next
-            | INW -> failwith "TODO"
+            | INW -> map.player.state <- West
           in
           move
       | Right ->
@@ -79,8 +90,8 @@ let update_location map attempt_move =
           let move =
             match query_tile map next with
             | W -> map.player_pos <- next
-            | NW -> failwith "TODO"
+            | NW -> map.player.state <- East
             | IW -> map.player_pos <- next
-            | INW -> failwith "TODO"
+            | INW -> map.player.state <- East
           in
           move)
