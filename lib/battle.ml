@@ -63,8 +63,7 @@ let apply_status pokemon =
       pokemon.speed <- int_of_float (0.5 *. float_of_int pokemon.speed)
   | _ -> ()
 
-(*TODO: IMPLEMENT SLEEP/FROZEN STATUS. IMPLEMENT ITEMS. DO SLEEP STUFF FOR
-  ENEMY*)
+(*TODO: IMPLEMENT ITEMS.*)
 
 let player_sleep_counter = ref 3
 let enemy_sleep_counter = ref 3
@@ -74,9 +73,11 @@ let battle_turn player_pokemon enemy_pokemon chosen_move =
     player_pokemon.status <> Paralysis
     || (player_pokemon.status = Paralysis && Random.int 4 <> 0)
     || player_pokemon.status <> Sleep
-    || (player_pokemon.status = Sleep && !player_sleep_counter <= 0)
+    || player_pokemon.status <> Frozen
+    || (player_pokemon.status = Sleep || player_pokemon.status = Frozen)
+       && !player_sleep_counter <= 0
   then begin
-    if player_pokemon.status = Sleep then begin
+    if player_pokemon.status = Sleep || player_pokemon.status = Frozen then begin
       player_pokemon.status <- NO;
       player_sleep_counter := 3
     end
@@ -100,17 +101,25 @@ let battle_turn player_pokemon enemy_pokemon chosen_move =
   end
   else if player_pokemon.status = Paralysis then
     print_endline "Couldn't move from Paralysis!"
-  else print_endline "Fast Asleep!";
-  player_sleep_counter := !player_sleep_counter - 1
+  else if player_pokemon.status = Sleep then begin
+    print_endline "Fast Asleep!";
+    player_sleep_counter := !player_sleep_counter - 1
+  end
+  else begin
+    print_endline "Frozen Solid!";
+    player_sleep_counter := !player_sleep_counter - 1
+  end
 
 let battle_turn_enemy player_pokemon enemy_pokemon =
   if
     enemy_pokemon.status <> Paralysis
     || (enemy_pokemon.status = Paralysis && Random.int 4 <> 0)
     || enemy_pokemon.status <> Sleep
-    || (enemy_pokemon.status = Sleep && !enemy_sleep_counter <= 0)
+    || enemy_pokemon.status <> Frozen
+    || (enemy_pokemon.status = Sleep || enemy_pokemon.status = Frozen)
+       && !enemy_sleep_counter <= 0
   then begin
-    if enemy_pokemon.status = Sleep then begin
+    if enemy_pokemon.status = Sleep || enemy_pokemon.status = Frozen then begin
       enemy_pokemon.status <- NO;
       enemy_sleep_counter := 3
     end
@@ -134,8 +143,14 @@ let battle_turn_enemy player_pokemon enemy_pokemon =
   end
   else if enemy_pokemon.status = Paralysis then
     print_endline "Couldn't move from Paralysis!"
-  else print_endline "Fast Asleep!";
-  enemy_sleep_counter := !enemy_sleep_counter - 1
+  else if enemy_pokemon.status = Sleep then begin
+    print_endline "Fast Asleep!";
+    enemy_sleep_counter := !enemy_sleep_counter - 1
+  end
+  else begin
+    print_endline "Frozen Solid!";
+    enemy_sleep_counter := !enemy_sleep_counter - 1
+  end
 
 let rec battle_loop player_pokemon enemy_pokemon =
   Array.iteri
