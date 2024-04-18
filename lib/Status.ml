@@ -11,6 +11,6 @@ let string_wrap (s : status) =
   match s with
   | Burn -> "Burned"
   | Poison -> "Poisoned"
-  | Sleep -> "Sleept"
+  | Sleep -> "Slept"
   | Paralysis -> "Paralyzed"
   | _ -> ""
