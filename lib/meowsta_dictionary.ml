@@ -3,6 +3,7 @@ open MType
 open Moves
 open Items
 open Abilities
+open Status
 
 let meowberger =
   {
@@ -16,6 +17,7 @@ let meowberger =
     defense = 10;
     speed = 8;
     moveset = [| water_gun; tackle; no; no |];
+    status = NO;
   }
 
 let clawson =
@@ -30,6 +32,7 @@ let clawson =
     defense = 10;
     speed = 8;
     moveset = [| water_gun; tackle; no; no |];
+    status = NO;
   }
 
 let weak_meowberger = { meowberger with hp = 0 }
@@ -46,4 +49,5 @@ let meowtter =
     defense = 13;
     speed = 9;
     moveset = [| water_gun; tackle; no; no |];
+    status = NO;
   }
