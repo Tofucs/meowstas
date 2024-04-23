@@ -47,17 +47,7 @@ let evolve m =
   m.attack <- int_of_float (1.2 *. float_of_int m.attack);
   m.defense <- int_of_float (1.2 *. float_of_int m.defense);
   m.speed <- int_of_float (1.2 *. float_of_int m.speed);
-  print_string (m.name ^ " has evolved!");
-
-  (match m.item with
-  | NO -> m.item <- LifeOrb
-  | LifeOrb | MegaStone -> m.item <- MegaStone);
-
-  match m.status with
-  | NO -> m.status <- Burn
-  | Burn -> m.status <- Poison
-  | Poison -> m.status <- Sleep
-  | Sleep | Paralysis -> m.status <- Paralysis
+  print_string (m.name ^ " has evolved!")
 
 (** The catching mechanic *)
 let try_catch m =
@@ -69,8 +59,10 @@ let try_catch m =
   in
   let status_modifier =
     match m.status with
-    | Sleep | Paralysis -> 2.0
-    | Poison | Burn -> 1.5
+    | Recoil | Heal -> 2.5
+    | Frozen -> 2.1
+    | Sleep | Paralysis -> 1.7
+    | Poison | Burn -> 1.3
     | NO -> 1.0
   in
   let hp_factor = float_of_int m.hp /. 100.0 in
