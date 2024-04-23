@@ -19,7 +19,6 @@ let meowberger =
     speed = 8;
     status = NO;
     moveset = [| water_gun; tackle; no; no |];
-    status = NO;
   }
 
 let clawson =
@@ -36,7 +35,6 @@ let clawson =
     speed = 8;
     status = NO;
     moveset = [| water_gun; tackle; no; no |];
-    status = NO;
   }
 
 let weak_meowberger = { meowberger with hp = 0 }
@@ -55,5 +53,4 @@ let meowtter =
     speed = 9;
     status = NO;
     moveset = [| water_gun; tackle; no; no |];
-    status = NO;
   }

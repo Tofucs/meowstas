@@ -17,7 +17,6 @@ type t = {
   mutable speed : int;
   mutable status : status;
   moveset : moves array;
-  mutable status : status;
 }
 
 let attack attacker defender move =

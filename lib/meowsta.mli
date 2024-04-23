@@ -17,7 +17,6 @@ type t = {
   mutable speed : int;
   mutable status : status;
   moveset : moves array;
-  mutable status : status;
 }
 
 val attack : t -> t -> moves -> unit
@@ -28,4 +27,3 @@ val is_dead : t -> bool
 
 val evolve : t -> unit
 val try_catch : t -> bool
-
