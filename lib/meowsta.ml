@@ -10,10 +10,12 @@ type t = {
   ability : abilities;
   mutable level : int;
   mutable item : items;
+  mutable max_hp : int;
   mutable hp : int;
   mutable attack : int;
   mutable defense : int;
   mutable speed : int;
+  mutable status : status;
   moveset : moves array;
   mutable status : status;
 }
@@ -31,7 +33,12 @@ let attack attacker defender move =
        *. type_multiplier move.attack_type (snd defender.poke_type)
     |> int_of_float
 
-let is_dead pokemon = if pokemon.hp <= 0 then true else false
+let is_dead pokemon =
+  if pokemon.hp <= 0 then begin
+    pokemon.hp <- 0;
+    true
+  end
+  else false
 
 (** The evolve mechanic *)
 let evolve m =
