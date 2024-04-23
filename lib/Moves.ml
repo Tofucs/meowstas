@@ -19,6 +19,17 @@ let absorb =
 let ember =
   { name = "ember"; damage = 10; attack_type = Fire; status_effect = Burn }
 
+let ice_ball =
+  { name = "ice ball"; damage = 10; attack_type = Ice; status_effect = Frozen }
+
+let shock =
+  {
+    name = "shock";
+    damage = 10;
+    attack_type = Electric;
+    status_effect = Paralysis;
+  }
+
 let tackle =
   { name = "tackle"; damage = 10; attack_type = Normal; status_effect = NO }
 
