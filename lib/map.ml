@@ -6,7 +6,7 @@ type map = {
   grid : tile array array;
   mutable player_pos : int option * int option;
   size : int * int;
-  mutable player : player;
+  player : player;
 }
 (**RI: All tile arrays within grid are the same length. AF: A 2D-array of tiles
    of x length, and each array is y length, represents a xy-coordinate grid of
@@ -20,12 +20,14 @@ let make () name grid (width, height) =
     area_name = name;
     grid;
     player_pos = (None, None);
-    size = (width, height);
+    size = (32 * width, 32 * height);
     player = Player.make ();
   }
 
 let create_player map (start_pos : int option * int option) =
   map.player_pos <- start_pos
+
+let get_grid map = map.grid
 
 let extract_int opt =
   match opt with

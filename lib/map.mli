@@ -20,6 +20,8 @@ val create_player : map -> int option * int option -> unit
    Requires: (x,y) is (Some int, Some int), otherwise it is not a valid position
    to create the player at.*)
 
+val get_grid : map -> tile array array
+
 val size : map -> int * int
 (**[size map] returns the (width, height) of the [map]*)
 

@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://cloudconvert.com/
+HostUrl=https://eu-central.storage.cloudconvert.com/tasks/3139aa47-fbcd-4997-a858-d04b8c2e9249/ocean1.bmp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20240423%2Ffra%2Fs3%2Faws4_request&X-Amz-Date=20240423T025937Z&X-Amz-Expires=86400&X-Amz-Signature=b4121351db1d10d5bdead074100fef38cb6bcae5ad670e8604c002b49fe17cfb&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22ocean1.bmp%22&response-content-type=image%2Fbmp&x-id=GetObject
