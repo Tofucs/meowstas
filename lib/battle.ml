@@ -1,6 +1,7 @@
 open Meowsta
 open Moves
 open MType
+open Status
 
 let () = Random.self_init ()
 
@@ -16,7 +17,7 @@ let check_effective (move : moves) (enemy_pokemon : t) =
 let inflict_status (move : moves) (damage : int) (player_pokemon : t)
     (enemy_pokemon : t) =
   match move.status_effect with
-  | NO -> enemy_pokemon.status <- NO
+  | NO -> enemy_pokemon.status <- enemy_pokemon.status
   | Recoil ->
       player_pokemon.hp <-
         player_pokemon.hp - int_of_float (0.25 *. float_of_int damage);
@@ -26,7 +27,7 @@ let inflict_status (move : moves) (damage : int) (player_pokemon : t)
         player_pokemon.hp + int_of_float (0.2 *. float_of_int damage);
       Printf.printf "%s received some healing!\n" player_pokemon.name
   | x ->
-      if Random.int 12 = 0 && enemy_pokemon.status = NO then begin
+      if Random.int 1 = 0 && enemy_pokemon.status = NO then begin
         enemy_pokemon.status <- x;
         Printf.printf "%s was %s!\n" enemy_pokemon.name (Status.string_wrap x);
         if x = Paralysis then
@@ -163,7 +164,8 @@ let rec battle_loop player_pokemon enemy_pokemon =
   Array.iteri
     (fun i move -> Printf.printf "%d: %s\n" (i + 1) move.name)
     player_pokemon.moveset;
-
+  print_endline (string_wrap player_pokemon.status);
+  print_endline (string_wrap enemy_pokemon.status);
   Printf.printf "Choose a move (type number): ";
   let choice = read_int () in
   let chosen_move = player_pokemon.moveset.(choice - 1) in

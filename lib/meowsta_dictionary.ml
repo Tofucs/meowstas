@@ -21,7 +21,7 @@ let meowberger =
     max_speed = 8;
     speed = 8;
     status = NO;
-    moveset = [| water_gun; tackle; no; no |];
+    moveset = [| ember; tackle; no; no |];
   }
 
 let clawson =

@@ -22,6 +22,32 @@ type t = {
   moveset : moves array;
 }
 
+let apply_booster_item (item : items) (move : moves) =
+  match item with
+  | NO -> float_of_int move.damage
+  | HardStone when move.attack_type = Rock -> 0.2 *. float_of_int move.damage
+  | BlackBelt when move.attack_type = Fighting ->
+      0.2 *. float_of_int move.damage
+  | BlackGlasses when move.attack_type = Dark -> 0.2 *. float_of_int move.damage
+  | Charcoal when move.attack_type = Fire -> 0.2 *. float_of_int move.damage
+  | DragonFang when move.attack_type = Dragon -> 0.2 *. float_of_int move.damage
+  | FairyFeather when move.attack_type = Fairy ->
+      0.2 *. float_of_int move.damage
+  | Magnet when move.attack_type = Electric -> 0.2 *. float_of_int move.damage
+  | MetalCoat when move.attack_type = Steel -> 0.2 *. float_of_int move.damage
+  | MiracleSeed when move.attack_type = Grass -> 0.2 *. float_of_int move.damage
+  | MysticWater when move.attack_type = Water -> 0.2 *. float_of_int move.damage
+  | NeverMeltIce when move.attack_type = Ice -> 0.2 *. float_of_int move.damage
+  | PoisonBarb when move.attack_type = Poison -> 0.2 *. float_of_int move.damage
+  | SharpBeak when move.attack_type = Flying -> 0.2 *. float_of_int move.damage
+  | SilkScarf when move.attack_type = Normal -> 0.2 *. float_of_int move.damage
+  | SilverPowder when move.attack_type = Bug -> 0.2 *. float_of_int move.damage
+  | SoftSand when move.attack_type = Ground -> 0.2 *. float_of_int move.damage
+  | SpellTag when move.attack_type = Ghost -> 0.2 *. float_of_int move.damage
+  | TwistedSpoon when move.attack_type = Psychic ->
+      0.2 *. float_of_int move.damage
+  | _ -> float_of_int move.damage
+
 let attack attacker defender move =
   let base_damage =
     float_of_int attacker.attack
