@@ -12,8 +12,11 @@ type t = {
   mutable item : items;
   mutable max_hp : int;
   mutable hp : int;
+  mutable max_attack : int;
   mutable attack : int;
+  mutable max_defense : int;
   mutable defense : int;
+  mutable max_speed : int;
   mutable speed : int;
   mutable status : status;
   moveset : moves array;

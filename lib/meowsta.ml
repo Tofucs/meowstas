@@ -12,8 +12,11 @@ type t = {
   mutable item : items;
   mutable max_hp : int;
   mutable hp : int;
+  mutable max_attack : int;
   mutable attack : int;
+  mutable max_defense : int;
   mutable defense : int;
+  mutable max_speed : int;
   mutable speed : int;
   mutable status : status;
   moveset : moves array;
@@ -23,7 +26,7 @@ let attack attacker defender move =
   let base_damage =
     float_of_int attacker.attack
     /. float_of_int defender.defense
-    *. float_of_int move.damage
+    *. apply_booster_item attacker.item move
   in
   defender.hp <-
     float_of_int defender.hp
@@ -39,7 +42,7 @@ let is_dead pokemon =
   end
   else false
 
-(** The evolve mechanic *)
+(** TODO: Need to CHANGE *)
 let evolve m =
   m.level <- m.level + 1;
   if int_of_float (1.2 *. float_of_int m.hp) > 100 then m.hp <- 100
@@ -47,31 +50,17 @@ let evolve m =
   m.attack <- int_of_float (1.2 *. float_of_int m.attack);
   m.defense <- int_of_float (1.2 *. float_of_int m.defense);
   m.speed <- int_of_float (1.2 *. float_of_int m.speed);
-  print_string (m.name ^ " has evolved!");
+  print_string (m.name ^ " has evolved!")
 
-  (match m.item with
-  | NO -> m.item <- LifeOrb
-  | LifeOrb | MegaStone -> m.item <- MegaStone);
-
-  match m.status with
-  | NO -> m.status <- Burn
-  | Burn -> m.status <- Poison
-  | Poison -> m.status <- Sleep
-  | Sleep | Paralysis -> m.status <- Paralysis
-
-(** The catching mechanic *)
+(** TODO: NEED TO CHANGE*)
 let try_catch m =
-  let base_chance =
-    match m.item with
-    | LifeOrb -> 1.0
-    | MegaStone -> 1.5
-    | _ -> 0.5 (* Default value for non-catch items *)
-  in
+  let base_chance = 1.0 in
+
   let status_modifier =
     match m.status with
     | Sleep | Paralysis -> 2.0
-    | Poison | Burn -> 1.5
-    | NO -> 1.0
+    | Poison | Burn | Frozen -> 1.5
+    | _ -> 1.0
   in
   let hp_factor = float_of_int m.hp /. 100.0 in
   let chance = base_chance *. status_modifier /. hp_factor in
