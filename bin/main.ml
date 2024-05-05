@@ -92,19 +92,52 @@ let render_tile renderer textures x y tile =
   | Ok () -> () (* Successfully rendered, do nothing *)
   | Error (`Msg e) -> Sdl.log "Failed to render tile: %s" e
 
+let extract_int opt =
+  match opt with
+  | Some i -> i
+  | None -> 0
+
+let render_player renderer game_map =
+  let x, y = Map.get_player_pos game_map in
+  let src = Sdl.Rect.create ~x:0 ~y:0 ~w:32 ~h:32 in
+  let dst =
+    Sdl.Rect.create ~x:(extract_int x * 32) ~y:(extract_int y * 32) ~w:32 ~h:32
+  in
+  let player = Map.get_player game_map in
+  let texture =
+    match player.state with
+    | South -> load_texture_from_file renderer "textures/pc-front1.bmp"
+    | North -> load_texture_from_file renderer "textures/pc-back1.bmp"
+    | West -> load_texture_from_file renderer "textures/pc-left1.bmp"
+    | East -> load_texture_from_file renderer "textures/pc-right1.bmp"
+  in
+  match Sdl.render_copy ~src ~dst renderer texture with
+  | Ok () -> () (* Successfully rendered, do nothing *)
+  | Error (`Msg e) -> Sdl.log "Failed to render tile: %s" e
+
 let handle_events map =
   let e = Sdl.Event.create () in
   let continue = ref true in
   while Sdl.poll_event (Some e) do
     match Sdl.Event.(enum (get e typ)) with
-    | `Quit -> continue := false
+    | `Quit ->
+        continue := false;
+        Printf.printf "window quit"
     | `Key_down -> (
         let key = Sdl.Event.(get e keyboard_keycode) in
         match key with
-        | 0x77 -> Map.update_location map Up
-        | 0x61 -> Map.update_location map Down
-        | 0x73 -> Map.update_location map Left
-        | 0x64 -> Map.update_location map Right
+        | 0x77 ->
+            Map.update_location map Up;
+            Printf.printf "W key down"
+        | 0x61 ->
+            Map.update_location map Left;
+            Printf.printf "A key down"
+        | 0x73 ->
+            Map.update_location map Down;
+            Printf.printf "S key down"
+        | 0x64 ->
+            Map.update_location map Right;
+            Printf.printf "D key down"
         | _ -> ())
     | _ -> ()
   done;
@@ -145,15 +178,27 @@ let main () =
               let rec loop () =
                 let start_ticks = Sdl.get_ticks () in
                 render_map renderer textures game_map;
+                render_player renderer game_map;
                 Sdl.render_present renderer;
-                let get_ticks = Sdl.get_ticks () in
-                let elapsed_ticks = Int32.sub get_ticks start_ticks in
-                let frame_delay = Int32.sub 33l elapsed_ticks in
-                (* Approximately 30 FPS *)
-                if frame_delay > 0l then Sdl.delay frame_delay;
-                loop ();
-                ()
+                let pos = Map.get_player_pos game_map in
+                Printf.printf "%d, %d\n"
+                  (extract_int (fst pos))
+                  (extract_int (snd pos));
+                match handle_events game_map with
+                | true ->
+                    let get_ticks = Sdl.get_ticks () in
+                    let elapsed_ticks = Int32.sub get_ticks start_ticks in
+                    let frame_delay = Int32.sub 33l elapsed_ticks in
+                    (* Approximately 30 FPS *)
+                    Sdl.pump_events ();
+                    if frame_delay > 0l then Sdl.delay frame_delay;
+                    loop ();
+                    ()
+                | false ->
+                    Sdl.destroy_window w;
+                    Sdl.quit ()
               in
+              Map.create_player game_map (Some 4, Some 4);
               loop ();
               Sdl.destroy_window w;
               Sdl.quit ()))

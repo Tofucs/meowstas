@@ -15,7 +15,23 @@ type map = {
 
 exception PlayerUninstantiated
 
+let print_grid (grid : Tile.tile array array) =
+  Array.iter
+    (fun row ->
+      Array.iter
+        (fun tile ->
+          print_string
+            (match tile with
+            | W -> "W " (* Walkable tile *)
+            | NW -> "NW " (* Non-walkable tile *)
+            | IW -> "IW " (* Interactive walkable tile *)
+            | INW -> "INW " (* Interactive non-walkable tile *)))
+        row;
+      print_newline () (* Move to the next line after each row *))
+    grid
+
 let make () name grid (width, height) =
+  print_grid grid;
   {
     area_name = name;
     grid;
@@ -27,6 +43,7 @@ let make () name grid (width, height) =
 let create_player map (start_pos : int option * int option) =
   map.player_pos <- start_pos
 
+let get_player map = map.player
 let get_grid map = map.grid
 
 let extract_int opt =
@@ -34,12 +51,21 @@ let extract_int opt =
   | Some i -> i
   | None -> 0
 
+let print_tile tile =
+  match tile with
+  | W -> Printf.printf "W"
+  | NW -> Printf.printf "NW"
+  | IW -> Printf.printf "IW"
+  | INW -> Printf.printf "INW"
+
 let size map = map.size
 let name map = map.area_name
 
 let query_tile map (x, y) =
   match (x, y) with
-  | Some x, Some y -> map.grid.(x).(y)
+  | Some x, Some y ->
+      Printf.printf "%d, %d" x y;
+      map.grid.(y).(x)
   | _, _ -> raise PlayerUninstantiated
 
 let get_player_pos map = map.player_pos
@@ -53,25 +79,34 @@ let update_location map attempt_move =
       | Idle -> ()
       | Up ->
           let curr = get_player_pos map in
-          let next = (fst curr, Some (extract_int (snd curr) + 1)) in
+          let next = (fst curr, Some (extract_int (snd curr) - 1)) in
           let move =
             match query_tile map next with
-            | W -> map.player_pos <- next
+            | W ->
+                map.player_pos <- next;
+                map.player.state <- North
             | NW ->
                 map.player.state <-
                   North (*don't change location as attempted move is blocked*)
-            | IW -> map.player_pos <- next
+            | IW ->
+                map.player_pos <- next;
+                map.player.state <- North
             | INW -> map.player.state <- North
           in
           move
       | Down ->
           let curr = get_player_pos map in
-          let next = (fst curr, Some (extract_int (snd curr) - 1)) in
+          let next = (fst curr, Some (extract_int (snd curr) + 1)) in
           let move =
+            print_tile (query_tile map next);
             match query_tile map next with
-            | W -> map.player_pos <- next
+            | W ->
+                map.player_pos <- next;
+                map.player.state <- South
             | NW -> map.player.state <- South
-            | IW -> map.player_pos <- next
+            | IW ->
+                map.player_pos <- next;
+                map.player.state <- South
             | INW -> map.player.state <- South
           in
           move
@@ -80,9 +115,13 @@ let update_location map attempt_move =
           let next = (Some (extract_int (fst curr) - 1), snd curr) in
           let move =
             match query_tile map next with
-            | W -> map.player_pos <- next
+            | W ->
+                map.player_pos <- next;
+                map.player.state <- West
             | NW -> map.player.state <- West
-            | IW -> map.player_pos <- next
+            | IW ->
+                map.player_pos <- next;
+                map.player.state <- West
             | INW -> map.player.state <- West
           in
           move
@@ -91,9 +130,13 @@ let update_location map attempt_move =
           let next = (Some (extract_int (fst curr) + 1), snd curr) in
           let move =
             match query_tile map next with
-            | W -> map.player_pos <- next
+            | W ->
+                map.player_pos <- next;
+                map.player.state <- East
             | NW -> map.player.state <- East
-            | IW -> map.player_pos <- next
+            | IW ->
+                map.player_pos <- next;
+                map.player.state <- East
             | INW -> map.player.state <- East
           in
           move)

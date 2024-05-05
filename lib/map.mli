@@ -34,6 +34,8 @@ val query_tile : map -> int option * int option -> tile
 val get_player_pos : map -> int option * int option
 (**[get_player_pos map] gets the position of the player on the map*)
 
+val get_player : map -> player
+
 val update_location : map -> moves -> unit
 (**[update_location map attempted_move] will attempt to move the player
    character in the direction of [attempted_move]. moves is a type with
