@@ -19,6 +19,8 @@ type t = {
   moveset : moves array;
 }
 
+let get_item m = m.item
+
 let attack attacker defender move =
   let base_damage =
     float_of_int attacker.attack
@@ -53,10 +55,31 @@ let evolve m =
 let try_catch m =
   let base_chance =
     match m.item with
-    | LifeOrb -> 1.0
-    | MegaStone -> 1.5
-    | _ -> 0.5 (* Default value for non-catch items *)
+    | NO -> 0.3
+    | HardStone
+    | BlackBelt
+    | BlackGlasses
+    | Charcoal
+    | DragonFang
+    | FairyFeather
+    | Magnet
+    | MetalCoat
+    | MiracleSeed -> 0.7
+    | MysticWater
+    | NeverMeltIce
+    | PoisonBarb
+    | SharpBeak
+    | SilkScarf
+    | SilverPowder
+    | SoftSand
+    | SpellTag
+    | TwistedSpoon -> 1.1
+    (*Medicine*)
+    | Potion | SuperPotion | HyperPotion | Revive | ParalyzeHeal | BurnHeal ->
+        1.5
+    | Antidote | FreezeHeal | SleepHeal -> 1.9
   in
+
   let status_modifier =
     match m.status with
     | Recoil | Heal -> 2.5

@@ -27,3 +27,4 @@ val is_dead : t -> bool
 
 val evolve : t -> unit
 val try_catch : t -> bool
+val get_item : t -> items
