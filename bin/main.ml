@@ -2,68 +2,6 @@ open Tsdl
 open Meowstas
 open Tile
 
-type textures = {
-  w : Sdl.texture;
-  nw : Sdl.texture;
-  iw : Sdl.texture;
-  inw : Sdl.texture;
-}
-
-let beginmap =
-  let tiles =
-    [
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-    ]
-  in
-  let convert_row row = Array.of_list row in
-  Array.of_list (List.map convert_row tiles)
-
-let game_map = Map.make () "begin" beginmap (20, 15)
-
 let load_texture_from_file renderer file =
   match Sdl.load_bmp file with
   | Error (`Msg e) ->
@@ -77,20 +15,6 @@ let load_texture_from_file renderer file =
       | Ok texture ->
           Sdl.free_surface surface;
           texture)
-
-let render_tile renderer textures x y tile =
-  let src = Sdl.Rect.create ~x:0 ~y:0 ~w:32 ~h:32 in
-  let dst = Sdl.Rect.create ~x:(x * 32) ~y:(y * 32) ~w:32 ~h:32 in
-  let texture =
-    match tile with
-    | W -> textures.w
-    | NW -> textures.nw
-    | IW -> textures.iw
-    | INW -> textures.inw
-  in
-  match Sdl.render_copy ~src ~dst renderer texture with
-  | Ok () -> () (* Successfully rendered, do nothing *)
-  | Error (`Msg e) -> Sdl.log "Failed to render tile: %s" e
 
 let extract_int opt =
   match opt with
@@ -115,92 +39,60 @@ let render_player renderer game_map =
   | Ok () -> () (* Successfully rendered, do nothing *)
   | Error (`Msg e) -> Sdl.log "Failed to render tile: %s" e
 
-let handle_events map =
-  let e = Sdl.Event.create () in
-  let continue = ref true in
-  while Sdl.poll_event (Some e) do
-    match Sdl.Event.(enum (get e typ)) with
-    | `Quit ->
-        continue := false;
-        Printf.printf "window quit"
-    | `Key_down -> (
-        let key = Sdl.Event.(get e keyboard_keycode) in
-        match key with
-        | 0x77 ->
-            Map.update_location map Up;
-            Printf.printf "W key down"
-        | 0x61 ->
-            Map.update_location map Left;
-            Printf.printf "A key down"
-        | 0x73 ->
-            Map.update_location map Down;
-            Printf.printf "S key down"
-        | 0x64 ->
-            Map.update_location map Right;
-            Printf.printf "D key down"
-        | _ -> ())
-    | _ -> ()
-  done;
-  !continue
+let window = ref None
+let renderer = ref None
+let is_running = ref false
 
-let render_map renderer textures (map : Map.map) =
-  Array.iteri
-    (fun i row ->
-      Array.iteri (fun j tile -> render_tile renderer textures j i tile) row)
-    (Map.get_grid map)
-
-let main () =
-  match Sdl.init Sdl.Init.(video + events) with
+let init () =
+  match Sdl.init Sdl.Init.everything with
   | Error (`Msg e) ->
       Sdl.log "Init error: %s" e;
       exit 1
   | Ok () -> (
-      match Sdl.create_window ~w:640 ~h:480 "SDL OpenGL" Sdl.Window.opengl with
+      match Sdl.create_window ~w:1280 ~h:720 "Battle" Sdl.Window.opengl with
       | Error (`Msg e) ->
           Sdl.log "Create window error: %s" e;
           exit 1
       | Ok w -> (
+          window := Some w;
           match
             Sdl.create_renderer w ~index:(-1) ~flags:Sdl.Renderer.accelerated
           with
           | Error (`Msg e) ->
               Sdl.log "Create renderer error: %s" e;
               exit 1
-          | Ok renderer ->
-              let textures =
-                {
-                  w = load_texture_from_file renderer "textures/sand1.bmp";
-                  nw = load_texture_from_file renderer "textures/ocean1.bmp";
-                  iw = load_texture_from_file renderer "textures/sand1.bmp";
-                  inw = load_texture_from_file renderer "textures/ocean1.bmp";
-                }
-              in
-              let rec loop () =
-                let start_ticks = Sdl.get_ticks () in
-                render_map renderer textures game_map;
-                render_player renderer game_map;
-                Sdl.render_present renderer;
-                let pos = Map.get_player_pos game_map in
-                Printf.printf "%d, %d\n"
-                  (extract_int (fst pos))
-                  (extract_int (snd pos));
-                match handle_events game_map with
-                | true ->
-                    let get_ticks = Sdl.get_ticks () in
-                    let elapsed_ticks = Int32.sub get_ticks start_ticks in
-                    let frame_delay = Int32.sub 33l elapsed_ticks in
-                    (* Approximately 30 FPS *)
-                    Sdl.pump_events ();
-                    if frame_delay > 0l then Sdl.delay frame_delay;
-                    loop ();
-                    ()
-                | false ->
-                    Sdl.destroy_window w;
-                    Sdl.quit ()
-              in
-              Map.create_player game_map (Some 4, Some 4);
-              loop ();
-              Sdl.destroy_window w;
-              Sdl.quit ()))
+          | Ok r ->
+              renderer := Some r;
+              let _ = Sdl.set_render_draw_color r 255 0 0 255 in
+              is_running := true))
+
+let update () = ()
+
+let render () =
+  let _ = Sdl.render_clear (Option.get !renderer) in
+  Sdl.render_present (Option.get !renderer)
+
+let on_destroy () =
+  Sdl.destroy_renderer (Option.get !renderer);
+  Sdl.destroy_window (Option.get !window);
+  Sdl.quit ();
+  print_endline "Quit Application"
+
+let handle_events () =
+  let e = Sdl.Event.create () in
+  while Sdl.poll_event (Some e) do
+    match Sdl.Event.(enum (get e typ)) with
+    | `Quit -> is_running := false
+    | _ -> ()
+  done
+
+let main () =
+  init ();
+  while !is_running do
+    handle_events ();
+    update ();
+    render ()
+  done;
+  on_destroy ()
 
 let () = main ()

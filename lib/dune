@@ -1,6 +1,6 @@
 (library
  (inline_tests)
  (name meowstas)
- (libraries graphics tsdl)
+ (libraries tsdl)
  (preprocess
   (pps ppx_inline_test)))
