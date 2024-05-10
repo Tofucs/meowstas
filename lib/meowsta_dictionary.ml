@@ -7,9 +7,8 @@ open Status
 
 (**Add Learnset*)
 let create_pokemon name poke_type ability level item max_hp max_attack
-    max_defense max_speed status moveset =
+    max_defense max_speed status moveset learnset =
   {
-
     name;
     poke_type;
     ability;
@@ -27,19 +26,23 @@ let create_pokemon name poke_type ability level item max_hp max_attack
     speed = max_speed;
     status;
     moveset;
+    learnset;
   }
 
 let meowberger =
   create_pokemon "Meowberger" (Fire, NO) NO 5 NO 100 14 10 8 NO
     [| ember; tackle; no; no |]
+    []
 
 let clawson =
   create_pokemon "Purrfesor Meowchael Clawson" (Ground, Dragon) NO 5 NO 100 14
     10 8 NO
     [| water_gun; tackle; no; no |]
+    []
 
 let weak_meowberger = { meowberger with hp = 0 }
 
 let meowtter =
   create_pokemon "Meowtter" (Water, NO) NO 5 NO 90 10 13 9 NO
     [| water_gun; tackle; no; no |]
+    []
