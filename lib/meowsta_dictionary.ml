@@ -9,6 +9,7 @@ open Status
 let create_pokemon name poke_type ability level item max_hp max_attack
     max_defense max_speed status moveset =
   {
+
     name;
     poke_type;
     ability;

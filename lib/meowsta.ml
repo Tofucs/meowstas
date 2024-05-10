@@ -25,6 +25,8 @@ type t = {
   mutable learnset : (int * moves) list;
 }
 
+let get_item m = m.item
+
 let empty =
   {
     name = "";
@@ -93,7 +95,7 @@ let is_dead pokemon =
   end
   else false
 
-(** TODO: Need to CHANGE *)
+
 
 let add_move (pokemon : t) (move : moves) =
   let replaced = ref false in
