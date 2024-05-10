@@ -1,5 +1,3 @@
-open Type
-
 type items =
   | NO
   (*Booster*)
@@ -31,3 +29,7 @@ type items =
   | Antidote
   | FreezeHeal
   | SleepHeal
+  (*PokeBalls*)
+  | MeowstaBall
+  | GreatMeowstaBall
+  | UltraMeowstaBall
