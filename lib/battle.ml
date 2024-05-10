@@ -27,7 +27,7 @@ let inflict_status (move : moves) (damage : int) (player_pokemon : t)
         player_pokemon.hp + int_of_float (0.2 *. float_of_int damage);
       Printf.printf "%s received some healing!\n" player_pokemon.name
   | x ->
-      if Random.int 1 = 0 && enemy_pokemon.status = NO then begin
+      if Random.int 8 = 0 && enemy_pokemon.status = NO then begin
         enemy_pokemon.status <- x;
         Printf.printf "%s was %s!\n" enemy_pokemon.name (Status.string_wrap x);
         if x = Paralysis then
@@ -56,8 +56,11 @@ let check_death player_pokemon enemy_pokemon =
       enemy_pokemon.name
   else if is_dead player_pokemon then
     Printf.printf "%s fainted! You lose.\n" player_pokemon.name
-  else if is_dead enemy_pokemon then
-    Printf.printf "%s fainted! You win.\n" enemy_pokemon.name
+  else if is_dead enemy_pokemon then begin
+    Printf.printf "%s fainted! You win.\n" enemy_pokemon.name;
+    player_pokemon.exp <- player_pokemon.exp + (enemy_pokemon.level * 50);
+    check_levelup player_pokemon
+  end
   else ()
 
 let apply_status pokemon =
@@ -68,10 +71,11 @@ let apply_status pokemon =
       Printf.printf "%s took damage from poison.\n" pokemon.name
   | Burn ->
       pokemon.hp <-
-        pokemon.hp - int_of_float (0.0625 *. float_of_int pokemon.max_hp)
+        pokemon.hp - int_of_float (0.0625 *. float_of_int pokemon.max_hp);
+      Printf.printf "%s took damage from burn.\n" pokemon.name
   | _ -> ()
 
-(*TODO: IMPLEMENT ITEMS. IMPLEMENT LEVEL UP. MOVE CATCHING *)
+(*TODO: IMPLEMENT LEVEL UP + ADDING MOVES. IMPLEMENT ABILITIES *)
 
 let player_sleep_counter = ref 3
 let enemy_sleep_counter = ref 3
@@ -164,8 +168,6 @@ let rec battle_loop player_pokemon enemy_pokemon =
   Array.iteri
     (fun i move -> Printf.printf "%d: %s\n" (i + 1) move.name)
     player_pokemon.moveset;
-  print_endline (string_wrap player_pokemon.status);
-  print_endline (string_wrap enemy_pokemon.status);
   Printf.printf "Choose a move (type number): ";
   let choice = read_int () in
   let chosen_move = player_pokemon.moveset.(choice - 1) in
