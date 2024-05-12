@@ -249,9 +249,9 @@ let tile_list =
 let shore1map =
   let tiles =
     [
-      [tr; tr; tr; tr; tr; tr; tr; tr; tr; rp; lp; tr; tr; tr; tr; tr; tr; tr; tr; tr];
-      [tr; tr; tr; tr; tr; tr; tr; tr; gt; rp; lp; gt; tr; tr; tr; tr; tr; tr; tr; tr];
-      [gt; tr; tr; tr; gt; gt; brp; bp; bp; tlg; lp; gt; gt; gt; tr; tr; gt; gt; gt; gt];
+      [tr; tr; tr; tr; tr; tr; tr; tr; rp; pa; lp; tr; tr; tr; tr; tr; tr; tr; tr; tr];
+      [tr; tr; tr; tr; tr; tr; tr; gt; rp; pt; lp; gt; tr; tr; tr; tr; tr; tr; tr; tr];
+      [gt; tr; tr; tr; gt; gt; brp; bp; tlg; pt; lp; gt; gt; gt; tr; tr; gt; gt; gt; gt];
       [bp; gt; gt; gt; gt; gr; rp; pa; pt; brg; tlp; gt; gt; gt; tr; gt; gt; gt; gt; gt];
       [pa; gt; gt; gt; gt; bp; tlg; brg; tp; tlp; gt; gt; gt; gt; gt; gt; gt; gt; tr; gt];
       [tp; gt; gt; gt; gt; tp; tp; tlp; gr; gr; gt; gt; gt; gt; gt; gt; gt; gt; gt; gt];
@@ -283,3 +283,22 @@ let shore2map =
   in
   let convert_row row = Array.of_list row in
   Array.of_list (List.map convert_row tiles) [@@ocamlformat "disable"]
+
+let route4 = 
+    let tiles =
+      [
+        [tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr];
+        [tr; tr; tr; tr; gr; gr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; gt; gt];
+        [gt; tr; tr; gr; gt; gt; gt; gt; gt; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+        [gt; gt; gt; gt; gt; brp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp];
+        [gt; gt; gt; gt; gt; rp; pa; pa; pa; pt; pa; pa; pa; pa; pa; pa; pa; pt; pt; pa];
+        [gt; gt; gt; gt; gt; trp; tp; tp; blg; brg; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp];
+        [gt; tr; tr; gr; gt; tr; tr; gr; gr; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+        [gt; tr; tr; gr; gt; tr; gt; gr; gr; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+        [gt; tr; tr; tr; gr; tr; gt; gr; gr; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+        [gt; tr; tr; tr; tr; tr; gt; gr; gr; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+        [gt; tr; tr; tr; tr; tr; tr; tr; rp; pa; lp; tr; tr; tr; tr; tr; tr; tr; tr; tr];
+      ]
+    in
+    let convert_row row = Array.of_list row in
+    Array.of_list (List.map convert_row tiles) [@@ocamlformat "disable"]

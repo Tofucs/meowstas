@@ -38,7 +38,7 @@ val get_player_pos : map -> int option * int option
 
 val get_player : map -> player
 
-val update_location : map -> moves -> move_map_callback -> unit
+val update_location : map -> moves -> move_map_callback -> bool
 (**[update_location map attempted_move] will attempt to move the player
    character in the direction of [attempted_move]. moves is a type with
    constructors Up, Down, Left, Right, each constructor corresponds to a
