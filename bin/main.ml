@@ -13,6 +13,8 @@ type textures = {
   exit : Sdl.texture;
   meowsta : Sdl.texture;
   bag : Sdl.texture;
+  party : Sdl.texture;
+  otherMeowstas : Sdl.texture;
   hardStone : Sdl.texture;
   blackBelt : Sdl.texture;
   blackGlasses : Sdl.texture;
@@ -144,17 +146,37 @@ let render_menu_screen renderer textures =
   let exit_button_rect = Sdl.Rect.create ~x:530 ~y:15 ~w:90 ~h:50 in
   match Sdl.render_copy ~dst:exit_button_rect renderer textures.exit with
   | Ok () -> (
-      let meowsta_button = Sdl.Rect.create ~x:200 ~y:200 ~w:90 ~h:50 in
-      match Sdl.render_copy ~dst:meowsta_button renderer textures.meowsta with
+      let party_button = Sdl.Rect.create ~x:100 ~y:200 ~w:90 ~h:50 in
+      match Sdl.render_copy ~dst:party_button renderer textures.party with
       | Ok () -> (
-          let bag_button = Sdl.Rect.create ~x:400 ~y:200 ~w:90 ~h:50 in
+          let bag_button = Sdl.Rect.create ~x:450 ~y:200 ~w:90 ~h:50 in
           match Sdl.render_copy ~dst:bag_button renderer textures.bag with
-          | Ok () -> ()
+          | Ok () -> (
+              let other_meowstas_button =
+                Sdl.Rect.create ~x:230 ~y:200 ~w:180 ~h:50
+              in
+              match
+                Sdl.render_copy ~dst:other_meowstas_button renderer
+                  textures.otherMeowstas
+              with
+              | Ok () -> ()
+              | Error (`Msg e) ->
+                  Sdl.log "Failed to render other meowstas button: %s" e)
           | Error (`Msg e) -> Sdl.log "Failed to render bag button: %s" e)
       | Error (`Msg e) -> Sdl.log "Failed to render meowsta button: %s" e)
   | Error (`Msg e) -> Sdl.log "Failed to render exit button: %s" e
 
-let render_meowsta_screen renderer textures =
+let render_party_screen renderer textures =
+  Sdl.set_render_draw_color renderer 200 200 200 200 |> ignore;
+  Sdl.render_clear renderer |> ignore;
+
+  (* Draw exit button *)
+  let exit_button_rect = Sdl.Rect.create ~x:530 ~y:15 ~w:90 ~h:50 in
+  match Sdl.render_copy ~dst:exit_button_rect renderer textures.exit with
+  | Ok () -> ()
+  | Error (`Msg e) -> Sdl.log "Failed to render exit button: %s" e
+
+let render_other_meowstas_screen renderer textures =
   Sdl.set_render_draw_color renderer 200 200 200 200 |> ignore;
   Sdl.render_clear renderer |> ignore;
 
@@ -297,7 +319,8 @@ let render_bag_screen renderer textures =
 type screen_state =
   | Game
   | Menu
-  | Meowsta
+  | Party
+  | OtherMeowstas
   | Bag
 
 let current_screen = ref Game
@@ -325,19 +348,29 @@ let handle_events map =
           match !current_screen with
           | Game -> current_screen := Menu
           | Menu -> current_screen := Game
-          | Meowsta -> current_screen := Menu
+          | Party -> current_screen := Menu
+          | OtherMeowstas -> current_screen := Menu
           | Bag -> current_screen := Menu
-        else if x >= 200 && x <= 200 + 90 && y >= 200 && y <= 200 + 50 then
+        else if x >= 100 && x <= 100 + 90 && y >= 200 && y <= 200 + 50 then
           match !current_screen with
           | Game -> current_screen := Game
-          | Menu -> current_screen := Meowsta
-          | Meowsta -> current_screen := Meowsta
+          | Menu -> current_screen := Party
+          | Party -> current_screen := Party
+          | OtherMeowstas -> current_screen := OtherMeowstas
           | Bag -> current_screen := Bag
-        else if x >= 400 && x <= 400 + 90 && y >= 200 && y <= 200 + 50 then
+        else if x >= 450 && x <= 450 + 90 && y >= 200 && y <= 200 + 50 then
           match !current_screen with
           | Game -> current_screen := Game
           | Menu -> current_screen := Bag
-          | Meowsta -> current_screen := Meowsta
+          | Party -> current_screen := Party
+          | OtherMeowstas -> current_screen := OtherMeowstas
+          | Bag -> current_screen := Bag
+        else if x >= 230 && x <= 230 + 180 && y >= 200 && y <= 200 + 50 then
+          match !current_screen with
+          | Game -> current_screen := Game
+          | Menu -> current_screen := OtherMeowstas
+          | Party -> current_screen := Party
+          | OtherMeowstas -> current_screen := OtherMeowstas
           | Bag -> current_screen := Bag)
     | _ -> ()
   done;
@@ -429,6 +462,9 @@ let main () =
                     load_texture_from_file renderer "textures/freezeHeal.bmp";
                   sleepHeal =
                     load_texture_from_file renderer "textures/sleepHeal.bmp";
+                  party = load_texture_from_file renderer "textures/party.bmp";
+                  otherMeowstas =
+                    load_texture_from_file renderer "textures/otherMeowstas.bmp";
                 }
               in
               let rec loop () =
@@ -440,7 +476,9 @@ let main () =
                       render_map renderer textures game_map;
                       render_button renderer textures
                   | Menu -> render_menu_screen renderer textures
-                  | Meowsta -> render_meowsta_screen renderer textures
+                  | Party -> render_party_screen renderer textures
+                  | OtherMeowstas ->
+                      render_other_meowstas_screen renderer textures
                   | Bag -> render_bag_screen renderer textures
                 end;
                 Sdl.render_present renderer;
