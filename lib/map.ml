@@ -41,7 +41,7 @@ let make () name grid (width, height) neighboring =
     area_name = name;
     grid;
     player_pos = (None, None);
-    size = (width, height);
+    size = (32 * width, 32 * height);
     player = Player.make ();
     neighboring = Array.of_list neighboring;
   }

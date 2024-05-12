@@ -3,47 +3,46 @@ open MType
 open Moves
 open Items
 open Abilities
+open Status
+
+(**Add Learnset*)
+let create_pokemon name poke_type ability level item max_hp max_attack
+    max_defense max_speed status moveset learnset =
+  {
+    name;
+    poke_type;
+    ability;
+    level;
+    exp = 0;
+    level_threshold = level * 200;
+    item;
+    max_hp;
+    hp = max_hp;
+    max_attack;
+    attack = max_attack;
+    max_defense;
+    defense = max_defense;
+    max_speed;
+    speed = max_speed;
+    status;
+    moveset;
+    learnset;
+  }
 
 let meowberger =
-  {
-    name = "Meowberger";
-    poke_type = (Fire, NO);
-    ability = NO;
-    level = 5;
-    item = NO;
-    hp = 100;
-    attack = 14;
-    defense = 10;
-    speed = 8;
-    moveset = [| water_gun; tackle; no; no |];
-  }
+  create_pokemon "Meowberger" (Fire, NO) NO 5 NO 100 14 10 8 NO
+    [| ember; tackle; no; no |]
+    []
 
 let clawson =
-  {
-    name = "Purrfesor Meowchael Clawson";
-    poke_type = (Ground, Dragon);
-    ability = NO;
-    level = 5;
-    item = NO;
-    hp = 100;
-    attack = 14;
-    defense = 10;
-    speed = 8;
-    moveset = [| water_gun; tackle; no; no |];
-  }
+  create_pokemon "Purrfesor Meowchael Clawson" (Ground, Dragon) NO 5 NO 100 14
+    10 8 NO
+    [| water_gun; tackle; no; no |]
+    []
 
 let weak_meowberger = { meowberger with hp = 0 }
 
 let meowtter =
-  {
-    name = "Meowtter";
-    poke_type = (Water, NO);
-    ability = NO;
-    level = 5;
-    item = NO;
-    hp = 90;
-    attack = 10;
-    defense = 13;
-    speed = 9;
-    moveset = [| water_gun; tackle; no; no |];
-  }
+  create_pokemon "Meowtter" (Water, NO) NO 5 NO 90 10 13 9 NO
+    [| water_gun; tackle; no; no |]
+    []
