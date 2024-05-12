@@ -137,6 +137,7 @@ let battle_turn_enemy player_pokemon enemy_pokemon =
     end
     else ();
     let enemy_move = enemy_pokemon.moveset.(0) in
+    (* TODO: random *)
     let old_player_hp = player_pokemon.hp in
     let () = attack enemy_pokemon player_pokemon enemy_move in
     cap_hp player_pokemon;

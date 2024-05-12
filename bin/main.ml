@@ -3,6 +3,7 @@ open Tsdl_image
 open Meowstas
 open Tile
 open Tilemaps
+open Main_utils
 
 type action_state =
   | Roaming
@@ -17,20 +18,6 @@ type game_state = {
 let window_size = ref (1920, 1056)
 let tile_size = ref 96
 let texture_table = Hashtbl.create 20
-
-let load_texture_from_file renderer file =
-  match Image.load file with
-  | Error (`Msg e) ->
-      Sdl.log "Failed to load %s: %s" file e;
-      exit 1
-  | Ok surface -> (
-      match Sdl.create_texture_from_surface renderer surface with
-      | Error (`Msg e) ->
-          Sdl.log "Create texture from surface error: %s" e;
-          exit 1
-      | Ok texture ->
-          Sdl.free_surface surface;
-          texture)
 
 let preload_textures renderer =
   List.iter
