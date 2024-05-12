@@ -81,7 +81,7 @@ let update_location map attempt_move (callback : move_map_callback) =
   match map.player_pos with
   | None, _ -> raise PlayerUninstantiated
   | _, None -> raise PlayerUninstantiated
-  | Some x, Some y -> (
+  | Some _, Some _ -> (
       let curr = get_player_pos map in
       let next =
         match attempt_move with
@@ -93,59 +93,105 @@ let update_location map attempt_move (callback : move_map_callback) =
       in
       if within_bounds next map then
         match attempt_move with
-        | Idle -> ()
+        | Idle -> false
         | Up ->
             let move =
               match (query_tile map next).interact with
               | W ->
-                  if map.player.state = North then map.player_pos <- next
-                  else map.player.state <- North
+                  if map.player.state = North then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- North;
+                    false)
               | NW ->
-                  map.player.state <-
-                    North (*don't change location as attempted move is blocked*)
+                  map.player.state <- North;
+                  false (*don't change location as attempted move is blocked*)
               | IW _ ->
-                  if map.player.state = North then map.player_pos <- next
-                  else map.player.state <- North
-              | INW _ -> map.player.state <- North
+                  if map.player.state = North then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- North;
+                    false)
+              | INW _ ->
+                  map.player.state <- North;
+                  false
             in
             move
         | Down ->
             let move =
               match (query_tile map next).interact with
               | W ->
-                  if map.player.state = South then map.player_pos <- next
-                  else map.player.state <- South
-              | NW -> map.player.state <- South
+                  if map.player.state = South then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- South;
+                    false)
+              | NW ->
+                  map.player.state <- South;
+                  false
               | IW _ ->
-                  if map.player.state = South then map.player_pos <- next
-                  else map.player.state <- South
-              | INW _ -> map.player.state <- South
+                  if map.player.state = South then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- South;
+                    false)
+              | INW _ ->
+                  map.player.state <- South;
+                  false
             in
             move
         | Left ->
             let move =
               match (query_tile map next).interact with
               | W ->
-                  if map.player.state = West then map.player_pos <- next
-                  else map.player.state <- West
-              | NW -> map.player.state <- West
+                  if map.player.state = West then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- West;
+                    false)
+              | NW ->
+                  map.player.state <- West;
+                  false
               | IW _ ->
-                  if map.player.state = West then map.player_pos <- next
-                  else map.player.state <- West
-              | INW _ -> map.player.state <- West
+                  if map.player.state = West then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- West;
+                    false)
+              | INW _ ->
+                  map.player.state <- West;
+                  false
             in
             move
         | Right ->
             let move =
               match (query_tile map next).interact with
               | W ->
-                  if map.player.state = East then map.player_pos <- next
-                  else map.player.state <- East
-              | NW -> map.player.state <- East
+                  if map.player.state = East then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- East;
+                    false)
+              | NW ->
+                  map.player.state <- East;
+                  false
               | IW _ ->
-                  if map.player.state = East then map.player_pos <- next
-                  else map.player.state <- East
-              | INW _ -> map.player.state <- East
+                  if map.player.state = East then (
+                    map.player_pos <- next;
+                    true)
+                  else (
+                    map.player.state <- East;
+                    false)
+              | INW _ ->
+                  map.player.state <- East;
+                  false
             in
             move
       else
@@ -168,5 +214,8 @@ let update_location map attempt_move (callback : move_map_callback) =
               | Left -> (get_width map - 1, y)
               | _ -> (0, 0)
             in
-            if next_map <> "" then callback next_map new_xy else ()
-        | _ -> ())
+            if next_map <> "" then (
+              callback next_map new_xy;
+              true)
+            else false
+        | _ -> false)
