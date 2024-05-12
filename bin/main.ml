@@ -4,6 +4,16 @@ open Meowstas
 open Tile
 open Tilemaps
 
+type action_state =
+  | Roaming
+  | Battle
+  | Interlude
+
+type game_state = {
+  mutable current_state : action_state;
+  world : World.world;
+}
+
 let window_size = ref (1920, 1056)
 let tile_size = ref 96
 let texture_table = Hashtbl.create 20
@@ -34,8 +44,6 @@ let preload_textures renderer =
 let resize_window window new_width new_height =
   Sdl.set_window_size window ~w:new_width ~h:new_height;
   window_size := (new_width, new_height)
-
-let game_map = Map.make () "begin" beginmap (20, 15)
 
 let render_tile renderer x y tile texture_table =
   let src = Sdl.Rect.create ~x:0 ~y:0 ~w:!tile_size ~h:!tile_size in
@@ -85,18 +93,10 @@ let handle_events map =
     | `Key_down -> (
         let key = Sdl.Event.(get e keyboard_keycode) in
         match key with
-        | 0x77 ->
-            Map.update_location map Up;
-            Printf.printf "W key down"
-        | 0x61 ->
-            Map.update_location map Left;
-            Printf.printf "A key down"
-        | 0x73 ->
-            Map.update_location map Down;
-            Printf.printf "S key down"
-        | 0x64 ->
-            Map.update_location map Right;
-            Printf.printf "D key down"
+        | 0x77 -> Map.update_location map Up World.update_map
+        | 0x61 -> Map.update_location map Left World.update_map
+        | 0x73 -> Map.update_location map Down World.update_map
+        | 0x64 -> Map.update_location map Right World.update_map
         | _ -> ())
     | _ -> ()
   done;
@@ -112,7 +112,7 @@ let render_map renderer (map : Map.map) =
         row)
     (Map.get_grid map)
 
-let main () =
+let main game () =
   match Sdl.init Sdl.Init.(video + events) with
   | Error (`Msg e) ->
       Sdl.log "Init error: %s" e;
@@ -138,12 +138,16 @@ let main () =
               preload_textures renderer;
               let rec loop () =
                 let start_ticks = Sdl.get_ticks () in
-                render_map renderer game_map;
-                render_player renderer game_map;
+                render_map renderer (World.get_map game.world.current_location);
+                render_player renderer
+                  (World.get_map game.world.current_location);
                 Sdl.render_present renderer;
                 (* let pos = Map.get_player_pos game_map in Printf.printf "%d,
                    %d\n" (extract_int (fst pos)) (extract_int (snd pos)); *)
-                match handle_events game_map with
+                Printf.printf "%s" game.world.current_location;
+                match
+                  handle_events (World.get_map game.world.current_location)
+                with
                 | true ->
                     let get_ticks = Sdl.get_ticks () in
                     let elapsed_ticks = Int32.sub get_ticks start_ticks in
@@ -157,7 +161,9 @@ let main () =
                     Sdl.destroy_window w;
                     Sdl.quit ()
               in
-              Map.create_player game_map (Some 4, Some 4);
+              Map.create_player
+                (World.get_map game.world.current_location)
+                (Some 4, Some 4);
               loop ();
               Sdl.destroy_window w;
               Sdl.quit ()))
@@ -166,4 +172,7 @@ let () =
   ignore (Sdl.init Sdl.Init.everything);
   let flags = Image.Init.(jpg + png) in
   assert (Image.(Init.test (init flags) Init.png));
-  main ()
+  World.initialize ();
+  let world = World.get_instance () in
+  let game : game_state = { current_state = Roaming; world } in
+  main game ()

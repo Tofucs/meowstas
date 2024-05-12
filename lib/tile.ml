@@ -1,8 +1,15 @@
+type action =
+  | LoadMap
+  | Dialouge
+      (**[action] determines the type of action an interactable tile is
+         associated with. These constructors are parameters to help specifiy
+         what actually is happening.*)
+
 type walk =
   | W
   | NW
-  | IW
-  | INW
+  | IW of action
+  | INW of action
 
 type terrain =
   | Grass

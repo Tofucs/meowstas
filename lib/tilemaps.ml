@@ -1,6 +1,7 @@
 open Tile
 
 (*tiles*)
+
 let grass_tile =
   {
     interact = W;
@@ -48,7 +49,7 @@ let tree_grass_tile =
 
 let water_tile =
   {
-    interact = INW;
+    interact = INW Dialouge;
     terrain = Water;
     deco1 = false;
     deco2 = false;
@@ -93,7 +94,7 @@ let bottom_left_grass =
 
 let path_tile =
   {
-    interact = W;
+    interact = IW LoadMap;
     terrain = Path;
     deco1 = false;
     deco2 = false;
@@ -102,7 +103,7 @@ let path_tile =
 
 let left_path_split =
   {
-    interact = W;
+    interact = IW LoadMap;
     terrain = Path;
     deco1 = false;
     deco2 = false;
@@ -111,7 +112,7 @@ let left_path_split =
 
 let right_path_split =
   {
-    interact = W;
+    interact = IW LoadMap;
     terrain = Path;
     deco1 = false;
     deco2 = false;
@@ -120,7 +121,7 @@ let right_path_split =
 
 let top_path_split =
   {
-    interact = W;
+    interact = IW LoadMap;
     terrain = Path;
     deco1 = false;
     deco2 = false;
@@ -129,7 +130,7 @@ let top_path_split =
 
 let bottom_path_split =
   {
-    interact = W;
+    interact = IW LoadMap;
     terrain = Path;
     deco1 = false;
     deco2 = false;
@@ -245,15 +246,34 @@ let tile_list =
   DO NOT REMOVE THE OCAMLFORMAT DISABLE, UNLESS WE WANT TO UNNECESSARILY FULFILL
   THE LINE REQUIREMENT WITH JUST THIS FILE! AlTHOUGH WE MAY BREAK RECORD FOR
   3110 PROJECT LINES, IT WILL BECOME UNREADABLE(MORE THAN IT ALREADY IS) !*)
-let beginmap =
+let shore1map =
   let tiles =
     [
       [tr; tr; tr; tr; tr; tr; tr; tr; tr; rp; lp; tr; tr; tr; tr; tr; tr; tr; tr; tr];
       [tr; tr; tr; tr; tr; tr; tr; tr; gt; rp; lp; gt; tr; tr; tr; tr; tr; tr; tr; tr];
       [gt; tr; tr; tr; gt; gt; brp; bp; bp; tlg; lp; gt; gt; gt; tr; tr; gt; gt; gt; gt];
-      [gt; gt; gt; gt; gt; gr; rp; pa; pt; brg; tlp; gt; gt; gt; tr; gt; gt; gt; gt; gt];
-      [gt; gt; gt; gt; gt; bp; tlg; brg; tp; tlp; gt; gt; gt; gt; gt; gt; gt; gt; tr; gt];
-      [gt; gt; gt; gt; gt; tp; tp; tlp; gr; gr; gt; gt; gt; gt; gt; gt; gt; gt; gt; gt];
+      [bp; gt; gt; gt; gt; gr; rp; pa; pt; brg; tlp; gt; gt; gt; tr; gt; gt; gt; gt; gt];
+      [pa; gt; gt; gt; gt; bp; tlg; brg; tp; tlp; gt; gt; gt; gt; gt; gt; gt; gt; tr; gt];
+      [tp; gt; gt; gt; gt; tp; tp; tlp; gr; gr; gt; gt; gt; gt; gt; gt; gt; gt; gt; gt];
+      [sd; sd; sd; sd; gt; gt; gt; gt; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd];
+      [wt; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; wt; wt; wt; wt; wt; wt; wt; wt; wt];
+      [wt; wt; wt; wt; sd; sd; sd; sd; sd; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt];
+      [wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt];
+      [wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt];
+    ]
+  in
+  let convert_row row = Array.of_list row in
+  Array.of_list (List.map convert_row tiles) [@@ocamlformat "disable"]
+
+let shore2map = 
+  let tiles =
+    [
+      [tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr];
+      [tr; tr; tr; tr; gr; gr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; gt; gt];
+      [gt; tr; tr; gr; gt; gt; gt; gt; gt; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+      [gt; gt; gt; gt; gt; brp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp];
+      [gt; gt; gt; gt; gt; rp; pa; pa; pa; pt; pa; pa; pa; pa; pa; pa; pa; pt; pt; pa];
+      [gt; gt; gt; gt; gt; trp; tp; tp; blg; brg; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp];
       [sd; sd; sd; sd; gt; gt; gt; gt; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd];
       [wt; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; wt; wt; wt; wt; wt; wt; wt; wt; wt];
       [wt; wt; wt; wt; sd; sd; sd; sd; sd; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt];
