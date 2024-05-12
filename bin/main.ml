@@ -1,106 +1,25 @@
 open Tsdl
+open Tsdl_image
 open Meowstas
 open Tile
-open Meowsta_dictionary
-open Set
+open Tilemaps
 
-type textures = {
-  w : Sdl.texture;
-  nw : Sdl.texture;
-  iw : Sdl.texture;
-  inw : Sdl.texture;
-  menu : Sdl.texture;
-  exit : Sdl.texture;
-  meowsta : Sdl.texture;
-  bag : Sdl.texture;
-  hardStone : Sdl.texture;
-  blackBelt : Sdl.texture;
-  blackGlasses : Sdl.texture;
-  charcoal : Sdl.texture;
-  dragonFang : Sdl.texture;
-  fairyFeather : Sdl.texture;
-  magnet : Sdl.texture;
-  metalCoat : Sdl.texture;
-  miracleSeed : Sdl.texture;
-  mysticWater : Sdl.texture;
-  neverMeltIce : Sdl.texture;
-  poisonBarb : Sdl.texture;
-  sharpBeak : Sdl.texture;
-  silkScarf : Sdl.texture;
-  silverPowder : Sdl.texture;
-  softSand : Sdl.texture;
-  spellTag : Sdl.texture;
-  twistedSpoon : Sdl.texture;
-  potion : Sdl.texture;
-  superPotion : Sdl.texture;
-  hyperPotion : Sdl.texture;
-  revive : Sdl.texture;
-  paralyzeHeal : Sdl.texture;
-  burnHeal : Sdl.texture;
-  antidote : Sdl.texture;
-  freezeHeal : Sdl.texture;
-  sleepHeal : Sdl.texture;
+type action_state =
+  | Roaming
+  | Battle
+  | Interlude
+
+type game_state = {
+  mutable current_state : action_state;
+  world : World.world;
 }
 
-let all_meowstas = ref [ Meowsta_dictionary.meowberger ]
-
-let beginmap =
-  let tiles =
-    [
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-      [
-        NW; W; W; W; W; W; W; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW; NW;
-      ];
-    ]
-  in
-  let convert_row row = Array.of_list row in
-  Array.of_list (List.map convert_row tiles)
-
-let game_map = Map.make () "begin" beginmap (20, 15)
+let window_size = ref (1920, 1056)
+let tile_size = ref 96
+let texture_table = Hashtbl.create 20
 
 let load_texture_from_file renderer file =
-  match Sdl.load_bmp file with
+  match Image.load file with
   | Error (`Msg e) ->
       Sdl.log "Failed to load %s: %s" file e;
       exit 1
@@ -113,249 +32,96 @@ let load_texture_from_file renderer file =
           Sdl.free_surface surface;
           texture)
 
-let render_tile renderer textures x y tile =
-  let src = Sdl.Rect.create ~x:0 ~y:0 ~w:32 ~h:32 in
-  let dst = Sdl.Rect.create ~x:(x * 32) ~y:(y * 32) ~w:32 ~h:32 in
-  let texture =
-    match tile with
-    | W -> textures.w
-    | NW -> textures.nw
-    | IW -> textures.iw
-    | INW -> textures.inw
+let preload_textures renderer =
+  List.iter
+    (fun tile ->
+      let path = tile.texture in
+      if not (Hashtbl.mem texture_table path) then
+        let texture = load_texture_from_file renderer path in
+        Hashtbl.add texture_table path texture)
+    Tilemaps.tile_list
+
+let resize_window window new_width new_height =
+  Sdl.set_window_size window ~w:new_width ~h:new_height;
+  window_size := (new_width, new_height)
+
+let render_tile renderer x y tile texture_table =
+  let src = Sdl.Rect.create ~x:0 ~y:0 ~w:!tile_size ~h:!tile_size in
+  let dst =
+    Sdl.Rect.create ~x:(x * !tile_size) ~y:(y * !tile_size) ~w:!tile_size
+      ~h:!tile_size
   in
+  let texture = Hashtbl.find texture_table tile.texture in
   match Sdl.render_copy ~src ~dst renderer texture with
   | Ok () -> () (* Successfully rendered, do nothing *)
   | Error (`Msg e) -> Sdl.log "Failed to render tile: %s" e
 
-let render_button renderer textures =
-  let dst = Sdl.Rect.create ~x:530 ~y:15 ~w:90 ~h:50 in
+let extract_int opt =
+  match opt with
+  | Some i -> i
+  | None -> 0
 
-  (* Sdl.set_render_draw_color renderer 255 0 0 150 |> ignore;
-     Sdl.render_fill_rect renderer (Some rect) |> ignore; *)
-  match Sdl.render_copy ~dst renderer textures.menu with
-  | Ok () -> () (* Successfully rendered, do nothing *)
-  | Error (`Msg e) -> Sdl.log "Failed to render tile: %s" e
-
-let render_menu_screen renderer textures =
-  Sdl.set_render_draw_color renderer 200 200 200 200 |> ignore;
-  Sdl.render_clear renderer |> ignore;
-
-  (* Draw exit button *)
-  let exit_button_rect = Sdl.Rect.create ~x:530 ~y:15 ~w:90 ~h:50 in
-  match Sdl.render_copy ~dst:exit_button_rect renderer textures.exit with
-  | Ok () -> (
-      let meowsta_button = Sdl.Rect.create ~x:200 ~y:200 ~w:90 ~h:50 in
-      match Sdl.render_copy ~dst:meowsta_button renderer textures.meowsta with
-      | Ok () -> (
-          let bag_button = Sdl.Rect.create ~x:400 ~y:200 ~w:90 ~h:50 in
-          match Sdl.render_copy ~dst:bag_button renderer textures.bag with
-          | Ok () -> ()
-          | Error (`Msg e) -> Sdl.log "Failed to render bag button: %s" e)
-      | Error (`Msg e) -> Sdl.log "Failed to render meowsta button: %s" e)
-  | Error (`Msg e) -> Sdl.log "Failed to render exit button: %s" e
-
-let render_meowsta_screen renderer textures =
-  Sdl.set_render_draw_color renderer 200 200 200 200 |> ignore;
-  Sdl.render_clear renderer |> ignore;
-
-  (* Draw exit button *)
-  let exit_button_rect = Sdl.Rect.create ~x:530 ~y:15 ~w:90 ~h:50 in
-  match Sdl.render_copy ~dst:exit_button_rect renderer textures.exit with
-  | Ok () -> ()
-  | Error (`Msg e) -> Sdl.log "Failed to render exit button: %s" e
-
-module StringSet = Set.Make (String)
-
-let render_bag_item renderer textures index item_string =
-  let x_val = 20 + (100 * (index mod 6)) in
-  let y_val = 90 + (60 * (index / 6)) in
-  let dst = Sdl.Rect.create ~x:x_val ~y:y_val ~w:90 ~h:50 in
-
+let render_player renderer game_map =
+  let x, y = Map.get_player_pos game_map in
+  let src = Sdl.Rect.create ~x:0 ~y:0 ~w:!tile_size ~h:!tile_size in
+  let dst =
+    Sdl.Rect.create
+      ~x:(extract_int x * !tile_size)
+      ~y:(extract_int y * !tile_size)
+      ~w:!tile_size ~h:!tile_size
+  in
+  let player = Map.get_player game_map in
   let texture =
-    match item_string with
-    | "HardStone" -> textures.hardStone
-    | "BlackBelt" -> textures.blackBelt
-    | "BlackGlasses" -> textures.blackGlasses
-    | "Charcoal" -> textures.charcoal
-    | "DragonFang" -> textures.dragonFang
-    | "FairyFeather" -> textures.fairyFeather
-    | "Magnet" -> textures.magnet
-    | "MetalCoat" -> textures.metalCoat
-    | "MiracleSeed" -> textures.miracleSeed
-    | "MysticWater" -> textures.mysticWater
-    | "NeverMeltIce" -> textures.neverMeltIce
-    | "PoisonBarb" -> textures.poisonBarb
-    | "SharpBeak" -> textures.sharpBeak
-    | "SilkScarf" -> textures.silkScarf
-    | "SilverPowder" -> textures.silverPowder
-    | "SoftSand" -> textures.softSand
-    | "SpellTag" -> textures.spellTag
-    | "TwistedSpoon" -> textures.twistedSpoon
-    | "Potion" -> textures.potion
-    | "SuperPotion" -> textures.superPotion
-    | "HyperPotion" -> textures.hyperPotion
-    | "Revive" -> textures.revive
-    | "ParalyzeHeal" -> textures.paralyzeHeal
-    | "BurnHeal" -> textures.burnHeal
-    | "Antidote" -> textures.antidote
-    | "FreezeHeal" -> textures.freezeHeal
-    | "SleepHeal" -> textures.sleepHeal
-    | _ -> textures.hardStone
+    match player.state with
+    | South -> load_texture_from_file renderer "textures/pc-front1.png"
+    | North -> load_texture_from_file renderer "textures/pc-back1.png"
+    | West -> load_texture_from_file renderer "textures/pc-left1.png"
+    | East -> load_texture_from_file renderer "textures/pc-right1.png"
   in
-  match Sdl.render_copy ~dst renderer texture with
+  match Sdl.render_copy ~src ~dst renderer texture with
   | Ok () -> () (* Successfully rendered, do nothing *)
   | Error (`Msg e) -> Sdl.log "Failed to render tile: %s" e
-
-let render_bag_screen renderer textures =
-  Sdl.set_render_draw_color renderer 200 200 200 200 |> ignore;
-  Sdl.render_clear renderer |> ignore;
-
-  let items_set = ref StringSet.empty in
-  List.iter
-    (fun m ->
-      match Meowsta.get_item m with
-      | NO -> ()
-      | item ->
-          items_set :=
-            StringSet.add
-              (match item with
-              | HardStone -> "HardStone"
-              | BlackBelt -> "BlackBelt"
-              | BlackGlasses -> "BlackGlasses"
-              | Charcoal -> "Charcoal"
-              | DragonFang -> "DragonFang"
-              | FairyFeather -> "FairyFeather"
-              | Magnet -> "Magnet"
-              | MetalCoat -> "MetalCoat"
-              | MiracleSeed -> "MiracleSeed"
-              | MysticWater -> "MysticWater"
-              | NeverMeltIce -> "NeverMeltIce"
-              | PoisonBarb -> "PoisonBarb"
-              | SharpBeak -> "SharpBeak"
-              | SilkScarf -> "SilkScarf"
-              | SilverPowder -> "SilverPowder"
-              | SoftSand -> "SoftSand"
-              | SpellTag -> "SpellTag"
-              | TwistedSpoon -> "TwistedSpoon"
-              | Potion -> "Potion"
-              | SuperPotion -> "SuperPotion"
-              | HyperPotion -> "HyperPotion"
-              | Revive -> "Revive"
-              | ParalyzeHeal -> "ParalyzeHeal"
-              | BurnHeal -> "BurnHeal"
-              | Antidote -> "Antidote"
-              | FreezeHeal -> "FreezeHeal"
-              | SleepHeal -> "SleepHeal"
-              | _ -> "")
-              !items_set) (* Add item to set *)
-    !all_meowstas;
-
-  (* let list_items_set = StringSet.to_list !items_set *)
-  let list_items_set =
-    [
-      "HardStone";
-      "MetalCoat";
-      "MiracleSeed";
-      "MysticWater";
-      "NeverMeltIce";
-      "PoisonBarb";
-      "SharpBeak";
-      "SilkScarf";
-      "SilverPowder";
-      "SoftSand";
-      "BlackBelt";
-      "SpellTag";
-      "TwistedSpoon";
-      "Potion";
-      "SuperPotion";
-      "HyperPotion";
-      "Revive";
-      "ParalyzeHeal";
-      "BurnHeal";
-      "BlackGlasses";
-      "Antidote";
-      "FreezeHeal";
-      "SleepHeal";
-      "Charcoal";
-      "DragonFang";
-      "FairyFeather";
-      "Magnet";
-    ]
-  in
-
-  (* print_int (List.length list_items_set); *)
-  List.iteri
-    (fun i name -> render_bag_item renderer textures i name)
-    list_items_set;
-
-  (* Draw exit button *)
-  let exit_button_rect = Sdl.Rect.create ~x:530 ~y:15 ~w:90 ~h:50 in
-  match Sdl.render_copy ~dst:exit_button_rect renderer textures.exit with
-  | Ok () -> ()
-  | Error (`Msg e) -> Sdl.log "Failed to render exit button: %s" e
-
-type screen_state =
-  | Game
-  | Menu
-  | Meowsta
-  | Bag
-
-let current_screen = ref Game
 
 let handle_events map =
   let e = Sdl.Event.create () in
   let continue = ref true in
   while Sdl.poll_event (Some e) do
     match Sdl.Event.(enum (get e typ)) with
-    | `Quit -> continue := false
+    | `Quit ->
+        continue := false;
+        Printf.printf "window quit"
     | `Key_down -> (
-        if !current_screen = Game then
-          let key = Sdl.Event.(get e keyboard_keycode) in
-          match key with
-          | 0x77 -> Map.update_location map Up
-          | 0x61 -> Map.update_location map Down
-          | 0x73 -> Map.update_location map Left
-          | 0x64 -> Map.update_location map Right
-          | _ -> ())
-    | `Mouse_button_down -> (
-        let x = Sdl.Event.(get e mouse_button_x) in
-        let y = Sdl.Event.(get e mouse_button_y) in
-
-        if x >= 530 && x <= 530 + 90 && y >= 15 && y <= 15 + 50 then
-          match !current_screen with
-          | Game -> current_screen := Menu
-          | Menu -> current_screen := Game
-          | Meowsta -> current_screen := Menu
-          | Bag -> current_screen := Menu
-        else if x >= 200 && x <= 200 + 90 && y >= 200 && y <= 200 + 50 then
-          match !current_screen with
-          | Game -> current_screen := Game
-          | Menu -> current_screen := Meowsta
-          | Meowsta -> current_screen := Meowsta
-          | Bag -> current_screen := Bag
-        else if x >= 400 && x <= 400 + 90 && y >= 200 && y <= 200 + 50 then
-          match !current_screen with
-          | Game -> current_screen := Game
-          | Menu -> current_screen := Bag
-          | Meowsta -> current_screen := Meowsta
-          | Bag -> current_screen := Bag)
+        let key = Sdl.Event.(get e keyboard_keycode) in
+        match key with
+        | 0x77 -> Map.update_location map Up World.update_map
+        | 0x61 -> Map.update_location map Left World.update_map
+        | 0x73 -> Map.update_location map Down World.update_map
+        | 0x64 -> Map.update_location map Right World.update_map
+        | _ -> ())
     | _ -> ()
   done;
   !continue
 
-let render_map renderer textures (map : Map.map) =
+let render_map renderer (map : Map.map) =
+  let w, h = !window_size in
+  let tile_size = w / Array.length (Map.get_grid map) in
   Array.iteri
     (fun i row ->
-      Array.iteri (fun j tile -> render_tile renderer textures j i tile) row)
+      Array.iteri
+        (fun j tile -> render_tile renderer j i tile texture_table)
+        row)
     (Map.get_grid map)
 
-let main () =
+let main game () =
   match Sdl.init Sdl.Init.(video + events) with
   | Error (`Msg e) ->
       Sdl.log "Init error: %s" e;
       exit 1
   | Ok () -> (
-      match Sdl.create_window ~w:640 ~h:480 "SDL OpenGL" Sdl.Window.opengl with
+      match
+        Sdl.create_window ~w:(fst !window_size) ~h:(snd !window_size)
+          "SDL OpenGL" Sdl.Window.opengl
+      with
       | Error (`Msg e) ->
           Sdl.log "Create window error: %s" e;
           exit 1
@@ -367,94 +133,46 @@ let main () =
               Sdl.log "Create renderer error: %s" e;
               exit 1
           | Ok renderer ->
-              let textures =
-                {
-                  w = load_texture_from_file renderer "textures/sand1.bmp";
-                  nw = load_texture_from_file renderer "textures/ocean1.bmp";
-                  iw = load_texture_from_file renderer "textures/sand1.bmp";
-                  inw = load_texture_from_file renderer "textures/ocean1.bmp";
-                  menu = load_texture_from_file renderer "textures/menu.bmp";
-                  exit = load_texture_from_file renderer "textures/exit.bmp";
-                  meowsta =
-                    load_texture_from_file renderer "textures/meowsta.bmp";
-                  bag = load_texture_from_file renderer "textures/bag.bmp";
-                  hardStone =
-                    load_texture_from_file renderer "textures/hardStone.bmp";
-                  blackBelt =
-                    load_texture_from_file renderer "textures/blackBelt.bmp";
-                  blackGlasses =
-                    load_texture_from_file renderer "textures/blackGlasses.bmp";
-                  charcoal =
-                    load_texture_from_file renderer "textures/charcoal.bmp";
-                  dragonFang =
-                    load_texture_from_file renderer "textures/dragonFang.bmp";
-                  fairyFeather =
-                    load_texture_from_file renderer "textures/fairyFeather.bmp";
-                  magnet = load_texture_from_file renderer "textures/magnet.bmp";
-                  metalCoat =
-                    load_texture_from_file renderer "textures/metalCoat.bmp";
-                  miracleSeed =
-                    load_texture_from_file renderer "textures/miracleSeed.bmp";
-                  mysticWater =
-                    load_texture_from_file renderer "textures/mysticWater.bmp";
-                  neverMeltIce =
-                    load_texture_from_file renderer "textures/neverMeltIce.bmp";
-                  poisonBarb =
-                    load_texture_from_file renderer "textures/poisonBarb.bmp";
-                  sharpBeak =
-                    load_texture_from_file renderer "textures/sharpBeak.bmp";
-                  silkScarf =
-                    load_texture_from_file renderer "textures/silkScarf.bmp";
-                  silverPowder =
-                    load_texture_from_file renderer "textures/silverPowder.bmp";
-                  softSand =
-                    load_texture_from_file renderer "textures/softSand.bmp";
-                  spellTag =
-                    load_texture_from_file renderer "textures/spellTag.bmp";
-                  twistedSpoon =
-                    load_texture_from_file renderer "textures/twistedSpoon.bmp";
-                  potion = load_texture_from_file renderer "textures/potion.bmp";
-                  superPotion =
-                    load_texture_from_file renderer "textures/superPotion.bmp";
-                  hyperPotion =
-                    load_texture_from_file renderer "textures/hyperPotion.bmp";
-                  revive = load_texture_from_file renderer "textures/revive.bmp";
-                  paralyzeHeal =
-                    load_texture_from_file renderer "textures/paralyzeHeal.bmp";
-                  burnHeal =
-                    load_texture_from_file renderer "textures/burnHeal.bmp";
-                  antidote =
-                    load_texture_from_file renderer "textures/antidote.bmp";
-                  freezeHeal =
-                    load_texture_from_file renderer "textures/freezeHeal.bmp";
-                  sleepHeal =
-                    load_texture_from_file renderer "textures/sleepHeal.bmp";
-                }
-              in
+              ignore
+                (Sdl.set_render_draw_blend_mode renderer Sdl.Blend.mode_blend);
+              preload_textures renderer;
               let rec loop () =
                 let start_ticks = Sdl.get_ticks () in
-
-                begin
-                  match !current_screen with
-                  | Game ->
-                      render_map renderer textures game_map;
-                      render_button renderer textures
-                  | Menu -> render_menu_screen renderer textures
-                  | Meowsta -> render_meowsta_screen renderer textures
-                  | Bag -> render_bag_screen renderer textures
-                end;
+                render_map renderer (World.get_map game.world.current_location);
+                render_player renderer
+                  (World.get_map game.world.current_location);
                 Sdl.render_present renderer;
-
-                let get_ticks = Sdl.get_ticks () in
-                let elapsed_ticks = Int32.sub get_ticks start_ticks in
-                let frame_delay = Int32.sub 33l elapsed_ticks in
-                (* Approximately 30 FPS *)
-                if frame_delay > 0l then Sdl.delay frame_delay;
-                if handle_events game_map then loop () else ()
+                (* let pos = Map.get_player_pos game_map in Printf.printf "%d,
+                   %d\n" (extract_int (fst pos)) (extract_int (snd pos)); *)
+                Printf.printf "%s" game.world.current_location;
+                match
+                  handle_events (World.get_map game.world.current_location)
+                with
+                | true ->
+                    let get_ticks = Sdl.get_ticks () in
+                    let elapsed_ticks = Int32.sub get_ticks start_ticks in
+                    let frame_delay = Int32.sub 33l elapsed_ticks in
+                    (* Approximately 30 FPS *)
+                    Sdl.pump_events ();
+                    if frame_delay > 0l then Sdl.delay frame_delay;
+                    loop ();
+                    ()
+                | false ->
+                    Sdl.destroy_window w;
+                    Sdl.quit ()
               in
-
+              Map.create_player
+                (World.get_map game.world.current_location)
+                (Some 4, Some 4);
               loop ();
               Sdl.destroy_window w;
               Sdl.quit ()))
 
-let () = main ()
+let () =
+  ignore (Sdl.init Sdl.Init.everything);
+  let flags = Image.Init.(jpg + png) in
+  assert (Image.(Init.test (init flags) Init.png));
+  World.initialize ();
+  let world = World.get_instance () in
+  let game : game_state = { current_state = Roaming; world } in
+  main game ()

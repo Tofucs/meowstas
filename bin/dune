@@ -1,4 +1,4 @@
 (executable
  (public_name meowstas)
  (name main)
- (libraries meowstas graphics tsdl))
+ (libraries meowstas))
