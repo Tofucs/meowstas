@@ -8,6 +8,7 @@ type t = {
   name : string;
   poke_type : mtype * mtype;
   ability : abilities;
+  evolution : int * t option;
   mutable exp : int;
   mutable level_threshold : int;
   mutable level : int;
@@ -34,3 +35,4 @@ val is_dead : t -> bool
    so. Returns [false] if not.*)
 
 val check_levelup : t -> unit
+val check_evolve : t -> t

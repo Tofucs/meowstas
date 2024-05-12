@@ -8,6 +8,7 @@ type t = {
   name : string;
   poke_type : mtype * mtype;
   ability : abilities;
+  evolution : int * t option;
   mutable exp : int;
   mutable level_threshold : int;
   mutable level : int;
@@ -32,6 +33,7 @@ let empty =
     name = "";
     poke_type = (NO, NO);
     ability = NO;
+    evolution = (1000, None);
     exp = 0;
     level_threshold = 1000;
     level = 0;
@@ -95,8 +97,6 @@ let is_dead pokemon =
   end
   else false
 
-
-
 let add_move (pokemon : t) (move : moves) =
   let replaced = ref false in
   for i = 0 to Array.length pokemon.moveset do
@@ -151,3 +151,11 @@ let check_levelup m =
     in
     learn_move m
   end
+
+let check_evolve m =
+  if m.level >= fst m.evolution then begin
+    match snd m.evolution with
+    | None -> m
+    | Some x -> x
+  end
+  else m
