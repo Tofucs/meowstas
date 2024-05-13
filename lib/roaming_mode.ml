@@ -199,25 +199,6 @@ module RoamingMode : GameMode = struct
 
   let update state = print_int (snd state.window_size)
 
-  let render state =
-    let renderer = state.renderer in
-    let game = Option.get state.roaming_state in
-    let _ = Sdl.render_clear renderer in
-    update_animation game;
-    render_map renderer
-      (World.get_map game.world.current_location)
-      state.texture_table;
-    render_player renderer (World.get_map game.world.current_location) game;
-    render_deco renderer (World.get_map game.world.current_location);
-    Sdl.render_present renderer;
-    (* let pos = Map.get_player_pos game_map in Printf.printf "%d, %d\n"
-       (extract_int (fst pos)) (extract_int (snd pos)); *)
-    Printf.printf "%s" game.world.current_location;
-    let prev_loc = game.world.current_location in
-    if prev_loc <> game.world.current_location then game.in_transition <- true;
-    if game.in_transition then fade_transition renderer 1000 state.window_size;
-    game.in_transition <- false
-
   let handle_events state =
     let game_state = Option.get state.roaming_state in
     let map = World.get_map game_state.world.current_location in
@@ -253,4 +234,29 @@ module RoamingMode : GameMode = struct
             | _ -> ())
       | _ -> ()
     done
+
+  let render state =
+    let renderer = state.renderer in
+    let game = Option.get state.roaming_state in
+    let _ = Sdl.render_clear renderer in
+    update_animation game;
+    render_map renderer
+      (World.get_map game.world.current_location)
+      state.texture_table;
+    render_player renderer (World.get_map game.world.current_location) game;
+    render_deco renderer (World.get_map game.world.current_location);
+    Sdl.render_present renderer;
+    (* let pos = Map.get_player_pos game_map in Printf.printf "%d, %d\n"
+       (extract_int (fst pos)) (extract_int (snd pos)); *)
+    Printf.printf "%s\n" game.world.current_location;
+    Printf.printf "%d|%d\n"
+      (Option.get
+         (fst (Map.get_player_pos (World.get_map game.world.current_location))))
+      (Option.get
+         (snd (Map.get_player_pos (World.get_map game.world.current_location))));
+    let prev_loc = game.world.current_location in
+    handle_events state;
+    if prev_loc <> game.world.current_location then game.in_transition <- true;
+    if game.in_transition then fade_transition renderer 1000 state.window_size;
+    game.in_transition <- false
 end

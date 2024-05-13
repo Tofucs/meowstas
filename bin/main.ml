@@ -57,26 +57,26 @@ let run_battle_mode state =
   BattleMode.render state
 
 let run_roaming_mode state =
-  RoamingMode.handle_events state;
   RoamingMode.update state;
   RoamingMode.render state
 
 let main () =
-  let singleton = init () in
-  while singleton.is_running do
+  let game = init () in
+  while game.is_running do
     let start_ticks = Sdl.get_ticks () in
-    (if singleton.action_state = Battle then (
-       match singleton.battle_state with
-       | Some _ -> run_battle_mode singleton
+    (if game.action_state = Battle then (
+       match game.battle_state with
+       | Some _ -> run_battle_mode game
        | None ->
-           BattleMode.init singleton;
-           run_battle_mode singleton)
+           BattleMode.init game;
+           run_battle_mode game)
      else
-       match singleton.roaming_state with
-       | Some _ -> run_roaming_mode singleton
+       match game.roaming_state with
+       | Some _ -> run_roaming_mode game
        | None ->
-           RoamingMode.init singleton;
-           run_roaming_mode singleton);
+           RoamingMode.init game;
+           run_roaming_mode game);
+
     let get_ticks = Sdl.get_ticks () in
     let elapsed_ticks = Int32.sub get_ticks start_ticks in
     let frame_delay = Int32.sub 17l elapsed_ticks in
@@ -84,6 +84,6 @@ let main () =
     Sdl.pump_events ();
     if frame_delay > 0l then Sdl.delay frame_delay
   done;
-  on_destroy singleton
+  on_destroy game
 
 let () = main ()

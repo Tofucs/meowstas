@@ -41,7 +41,7 @@ let make () name grid (width, height) neighboring =
     area_name = name;
     grid;
     player_pos = (None, None);
-    size = (32 * width, 32 * height);
+    size = (width, height);
     player = Player.make ();
     neighboring = Array.of_list neighboring;
   }
@@ -215,6 +215,7 @@ let update_location map attempt_move (callback : move_map_callback) =
               | _ -> (0, 0)
             in
             if next_map <> "" then (
+              Printf.printf "%d,%d" (fst new_xy) (snd new_xy);
               callback next_map new_xy;
               true)
             else false
