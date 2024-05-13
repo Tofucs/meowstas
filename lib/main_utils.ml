@@ -53,7 +53,6 @@ type global_state = {
   mutable action_state : action_state;
   mutable battle_state : battle_state option;
   mutable roaming_state : roaming_state option;
-  mutable world : World.world;
   texture_table : (string, Sdl.texture) Hashtbl.t;
 }
 

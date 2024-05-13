@@ -8,8 +8,10 @@ open Battle_mode
 open Roaming_mode
 
 let init () =
-  let _ = Ttf.init () in
   let _ = Sdl.init Sdl.Init.everything in
+  let flags = Image.Init.(jpg + png) in
+  assert (Image.(Init.test (init flags) Init.png));
+  let _ = Ttf.init () in
   let window = ref None in
   let renderer = ref None in
   let window_size = (1920, 1056) in
@@ -40,7 +42,6 @@ let init () =
         action_state = Roaming;
         battle_state = None;
         roaming_state = None;
-        world = World.get_instance ();
         texture_table = Hashtbl.create 20;
       }
 
@@ -63,18 +64,25 @@ let run_roaming_mode state =
 let main () =
   let singleton = init () in
   while singleton.is_running do
-    if singleton.action_state = Battle then (
-      match singleton.battle_state with
-      | Some _ -> run_battle_mode singleton
-      | None ->
-          BattleMode.init singleton;
-          run_battle_mode singleton)
-    else
-      match singleton.roaming_state with
-      | Some _ -> run_roaming_mode singleton
-      | None ->
-          RoamingMode.init singleton;
-          run_roaming_mode singleton
+    let start_ticks = Sdl.get_ticks () in
+    (if singleton.action_state = Battle then (
+       match singleton.battle_state with
+       | Some _ -> run_battle_mode singleton
+       | None ->
+           BattleMode.init singleton;
+           run_battle_mode singleton)
+     else
+       match singleton.roaming_state with
+       | Some _ -> run_roaming_mode singleton
+       | None ->
+           RoamingMode.init singleton;
+           run_roaming_mode singleton);
+    let get_ticks = Sdl.get_ticks () in
+    let elapsed_ticks = Int32.sub get_ticks start_ticks in
+    let frame_delay = Int32.sub 17l elapsed_ticks in
+    (* Approximately 60 FPS *)
+    Sdl.pump_events ();
+    if frame_delay > 0l then Sdl.delay frame_delay
   done;
   on_destroy singleton
 
