@@ -4,8 +4,8 @@ open Tile
 open Tsdl_image
 open Tsdl_ttf
 open Main_utils
-open Raymond_main
-open Andrew_main
+open Battle_mode
+open Roaming_mode
 
 let init () =
   let _ = Ttf.init () in
@@ -41,6 +41,7 @@ let init () =
         battle_state = None;
         roaming_state = None;
         world = World.get_instance ();
+        texture_table = Hashtbl.create 20;
       }
 
 let on_destroy state =

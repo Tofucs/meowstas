@@ -54,6 +54,7 @@ type global_state = {
   mutable battle_state : battle_state option;
   mutable roaming_state : roaming_state option;
   mutable world : World.world;
+  texture_table : (string, Sdl.texture) Hashtbl.t;
 }
 
 (* the global state is initialized in main, each action state is initialized by
