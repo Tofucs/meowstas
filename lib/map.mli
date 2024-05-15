@@ -6,9 +6,11 @@ type map
    player, with ['t] as the type of tile in the grid. Keeps track of player
    location, size of the area being traversed, and the name of the area*)
 
+type move_map_callback = string -> int * int -> unit
+
 exception PlayerUninstantiated
 
-val make : unit -> string -> tile array array -> int * int -> map
+val make : unit -> string -> tile array array -> int * int -> string list -> map
 (**[make name grid (w, h)] makes a map area with the name [name], and its
    walkable and non walkable areas determined by the 2d array [grid], with width
    w and height h Requires: h is the length of the tile array array, and w is
@@ -34,7 +36,9 @@ val query_tile : map -> int option * int option -> tile
 val get_player_pos : map -> int option * int option
 (**[get_player_pos map] gets the position of the player on the map*)
 
-val update_location : map -> moves -> unit
+val get_player : map -> player
+
+val update_location : map -> moves -> move_map_callback -> bool
 (**[update_location map attempted_move] will attempt to move the player
    character in the direction of [attempted_move]. moves is a type with
    constructors Up, Down, Left, Right, each constructor corresponds to a

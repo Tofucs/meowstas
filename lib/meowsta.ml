@@ -95,8 +95,6 @@ let is_dead pokemon =
   end
   else false
 
-
-
 let add_move (pokemon : t) (move : moves) =
   let replaced = ref false in
   for i = 0 to Array.length pokemon.moveset do
