@@ -388,18 +388,25 @@ module MenuMode : GameMode = struct
             party_buttons_visible := false;
             other_meowstas_buttons_visible := false;
             bag_buttons_visible := false)
-      | _ -> ()
-      (* if !buttons_visible then begin Option.iter (fun btn ->
-         Button.handle_event btn e) !party_button; Option.iter (fun btn ->
-         Button.handle_event btn e) !other_meowstas_button; Option.iter (fun btn
-         -> Button.handle_event btn e) !bag_button end else if
-         !bag_buttons_visible then ( render_bag_screen state; List.iter (fun b
-         -> Button.handle_event b e) !bag_buttons_list) else if
-         !party_buttons_visible then ( render_party_screen state; List.iter (fun
-         b -> Button.handle_event b e) !party_buttons_list) else if
-         !other_meowstas_buttons_visible then ( render_other_meowstas_screen
-         state; List.iter (fun b -> Button.handle_event b e)
-         !other_meowstas_buttons_list) *)
+      | _ ->
+          if !buttons_visible then begin
+            Option.iter (fun btn -> Button.handle_event btn e) !party_button;
+            Option.iter
+              (fun btn -> Button.handle_event btn e)
+              !other_meowstas_button;
+            Option.iter (fun btn -> Button.handle_event btn e) !bag_button
+          end
+          else if !bag_buttons_visible then (
+            render_bag_screen state;
+            List.iter (fun b -> Button.handle_event b e) !bag_buttons_list)
+          else if !party_buttons_visible then (
+            render_party_screen state;
+            List.iter (fun b -> Button.handle_event b e) !party_buttons_list)
+          else if !other_meowstas_buttons_visible then (
+            render_other_meowstas_screen state;
+            List.iter
+              (fun b -> Button.handle_event b e)
+              !other_meowstas_buttons_list)
     done
 end
 
