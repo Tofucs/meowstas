@@ -341,12 +341,15 @@ module MenuMode : GameMode = struct
       Option.iter (fun btn -> Button.render btn) !bag_button
     end
     else if !bag_buttons_visible then (
+      render_bag_screen state;
       List.iter (fun b -> Button.render b) !bag_buttons_list;
       Option.iter (fun btn -> Button.render btn) !exit_button)
     else if !party_buttons_visible then (
+      render_party_screen state;
       List.iter (fun b -> Button.render b) !party_buttons_list;
       Option.iter (fun btn -> Button.render btn) !exit_button)
     else if !other_meowstas_buttons_visible then begin
+      render_other_meowstas_screen state;
       List.iter (fun b -> Button.render b) !other_meowstas_buttons_list;
       Option.iter (fun btn -> Button.render btn) !exit_button
     end;
@@ -377,29 +380,26 @@ module MenuMode : GameMode = struct
             buttons_visible := false;
             party_buttons_visible := true)
           else if x >= 1750 && x <= 1750 + 100 && y >= 40 && y <= 40 + 40 then (
+            (* Option.iter (fun btn -> Button.handle_event btn e) !party_button;
+               Option.iter (fun btn -> Button.handle_event btn e)
+               !other_meowstas_button; Option.iter (fun btn ->
+               Button.handle_event btn e) !bag_button *)
             buttons_visible := true;
             party_buttons_visible := false;
             other_meowstas_buttons_visible := false;
             bag_buttons_visible := false)
-      | _ ->
-          if !buttons_visible then begin
-            Option.iter (fun btn -> Button.handle_event btn e) !party_button;
-            Option.iter
-              (fun btn -> Button.handle_event btn e)
-              !other_meowstas_button;
-            Option.iter (fun btn -> Button.handle_event btn e) !bag_button
-          end
-          else if !bag_buttons_visible then (
-            render_bag_screen state;
-            List.iter (fun b -> Button.handle_event b e) !bag_buttons_list)
-          else if !party_buttons_visible then (
-            render_party_screen state;
-            List.iter (fun b -> Button.handle_event b e) !party_buttons_list)
-          else if !other_meowstas_buttons_visible then (
-            render_other_meowstas_screen state;
-            List.iter
-              (fun b -> Button.handle_event b e)
-              !other_meowstas_buttons_list)
+      | _ -> ()
+      (* if !buttons_visible then begin Option.iter (fun btn ->
+         Button.handle_event btn e) !party_button; Option.iter (fun btn ->
+         Button.handle_event btn e) !other_meowstas_button; Option.iter (fun btn
+         -> Button.handle_event btn e) !bag_button end else if
+         !bag_buttons_visible then ( render_bag_screen state; List.iter (fun b
+         -> Button.handle_event b e) !bag_buttons_list) else if
+         !party_buttons_visible then ( render_party_screen state; List.iter (fun
+         b -> Button.handle_event b e) !party_buttons_list) else if
+         !other_meowstas_buttons_visible then ( render_other_meowstas_screen
+         state; List.iter (fun b -> Button.handle_event b e)
+         !other_meowstas_buttons_list) *)
     done
 end
 
