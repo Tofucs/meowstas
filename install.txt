@@ -1,5 +1,7 @@
 1. Download the project
 2. Open terminal in the root folder of meowstas
+3. If necessary install the OCaml Graphics library by running [opam install
+graphics] and install the font by running [sudo apt-get install xfonts-base]
 3. Run [dune exec meowstas] to start the game
 4. It will show something like this 
 
