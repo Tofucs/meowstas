@@ -8,31 +8,6 @@ open Battle_mode
 open Roaming_mode
 open Menu_mode
 
-(* let window = ref None let renderer = ref None let is_running = ref false *)
-
-(* try to create a button class / module *)
-(* don't worry about doing anything with the button, as long as it is
-   pressable *)
-
-(* let init () = match Sdl.init Sdl.Init.everything with | Error (`Msg e) ->
-   Sdl.log "Init error: %s" e; exit 1 | Ok () -> ( match Sdl.create_window
-   ~w:1280 ~h:720 "Battle" Sdl.Window.opengl with | Error (`Msg e) -> Sdl.log
-   "Create window error: %s" e; exit 1 | Ok w -> ( window := Some w; match
-   Sdl.create_renderer w ~index:(-1) ~flags:Sdl.Renderer.accelerated with |
-   Error (`Msg e) -> Sdl.log "Create renderer error: %s" e; exit 1 | Ok r ->
-   renderer := Some r;
-
-   let _ = Sdl.set_render_draw_color r 255 0 0 255 in is_running := true))
-
-   let update () = ()
-
-   let render () = let _ = Sdl.render_clear (Option.get !renderer) in
-
-   Sdl.render_present (Option.get !renderer) *)
-
-(* let main () = init (); while !is_running do handle_events (); update ();
-   render () done; on_destroy () *)
-
 (* let previous_state = ref None *)
 
 let init () =

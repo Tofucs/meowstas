@@ -38,6 +38,3 @@ let render { rect; texture; renderer; _ } =
   Sdl.render_fill_rect renderer (Some rect) |> ignore;
   Sdl.render_copy renderer ~dst:rect texture |> ignore
 (* Sdl.set_render_draw_color renderer 0 0 0 255 |> ignore *)
-
-(* Clean up resources *)
-let destroy { texture; _ } = Sdl.destroy_texture texture

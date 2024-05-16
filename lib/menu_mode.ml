@@ -19,12 +19,7 @@ module MenuMode : GameMode = struct
   let other_meowstas_button = ref None
   let bag_button = ref None
   let exit_button = ref None
-  (* type screen_state = | Game | Menu | Party | OtherMeowstas | Bag *)
 
-  (* let exit_button = Button.create renderer ~x:x_val ~y:y_val ~w:250 ~h:60
-     ~text:item_string ?texture:None ~action:f ~action_param:x *)
-
-  (*Reference to store the button *)
 
   let rec count x lst =
     match lst with
@@ -371,11 +366,13 @@ module MenuMode : GameMode = struct
             (** possible_button is an option button. From here, you can extract 
                   the text from doing the pattern matching and doing b.item to get 
                   the item (ex: HardStone) it clicked or b.text to get the text 
-                  (ex: "HardStone x2") *)
+                  (ex: "HardStone x2"). *)
             let possible_button = if_item !bag_buttons_list x y in
             match possible_button with
             | None -> ()
             | Some b -> print_endline ("pressed " ^ b.text)
+          (** And if you want the meowsta in the "party" or "other meowstas" 
+              just do b.meowsta*)
           else if !party_buttons_visible then
             let possible_button = if_item !party_buttons_list x y in
             match possible_button with
