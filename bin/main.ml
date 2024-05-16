@@ -39,7 +39,7 @@ let init () =
         renderer = Option.get !renderer;
         window = Option.get !window;
         window_size;
-        action_state = Roaming;
+        action_state = Battle;
         battle_state = None;
         roaming_state = None;
         texture_table = Hashtbl.create 20;
