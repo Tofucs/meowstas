@@ -30,6 +30,16 @@ let create_pokemon name poke_type ability level item max_hp max_attack
     learnset;
   }
 
+let pikachu =
+  create_pokemon "Pikachu" (Electric, NO) NO 5 NO 100 14 10 8 NO
+    [| shock; tackle; no; no |]
+    [] 16 None
+
+let meowleaf =
+  create_pokemon "Meowleaf" (Grass, NO) NO 5 NO 100 14 10 8 NO
+    [| absorb; tackle; no; no |]
+    [] 16 None
+
 let meowberger =
   create_pokemon "Meowberger" (Fire, NO) NO 5 NO 100 14 10 8 NO
     [| ember; tackle; no; no |]

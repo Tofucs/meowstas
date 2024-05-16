@@ -75,6 +75,7 @@ let handle_events state =
   while Sdl.poll_event (Some e) do
     match Sdl.Event.(enum (get e typ)) with
     | `Key_down -> (
+        Printf.printf "keydown";
         let key = Sdl.Event.(get e keyboard_keycode) in
         if key = Sdl.K.m then
           (* Assuming K.space is the keycode for space *)

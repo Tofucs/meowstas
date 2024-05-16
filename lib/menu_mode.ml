@@ -353,6 +353,10 @@ module MenuMode : GameMode = struct
     while Sdl.poll_event (Some e) do
       match Sdl.Event.(enum (get e typ)) with
       | `Quit -> state.is_running <- false
+      | `Key_down -> (
+        let key = Sdl.Event.(get e keyboard_keycode) in
+        if key = Sdl.K.m then
+          state.action_state <- state.previous_state)
       | `Mouse_button_down ->
           let x = Sdl.Event.(get e mouse_button_x) in
           let y = Sdl.Event.(get e mouse_button_y) in

@@ -197,7 +197,7 @@ module RoamingMode : GameMode = struct
       Map.create_player (World.get_map world.current_location) (Some 4, Some 4))
     else ()
 
-  let update state = print_int (snd state.window_size)
+  let update state = ()
 
   let handle_events state =
     let game_state = Option.get state.roaming_state in
@@ -208,6 +208,7 @@ module RoamingMode : GameMode = struct
       match Sdl.Event.(enum (get e typ)) with
       | `Quit -> state.is_running <- false
       | `Key_down -> (
+          Printf.printf "keydown";
           if not game_state.in_animation then
             let key = Sdl.Event.(get e keyboard_keycode) in
             match key with
@@ -231,6 +232,9 @@ module RoamingMode : GameMode = struct
                   Map.update_location map Right World.update_map
                   && prev_loc = game_state.world.current_location
                 then start_animation game_state map Right
+            | x when x = Sdl.K.m ->
+                state.previous_state <- state.action_state;
+                state.action_state <- Menu
             | _ -> ())
       | _ -> ()
     done
@@ -248,12 +252,10 @@ module RoamingMode : GameMode = struct
     Sdl.render_present renderer;
     (* let pos = Map.get_player_pos game_map in Printf.printf "%d, %d\n"
        (extract_int (fst pos)) (extract_int (snd pos)); *)
-    Printf.printf "%s\n" game.world.current_location;
-    Printf.printf "%d|%d\n"
-      (Option.get
-         (fst (Map.get_player_pos (World.get_map game.world.current_location))))
-      (Option.get
-         (snd (Map.get_player_pos (World.get_map game.world.current_location))));
+    (* Printf.printf "%s\n" game.world.current_location; *)
+    (* Printf.printf "%d|%d\n" (Option.get (fst (Map.get_player_pos
+       (World.get_map game.world.current_location)))) (Option.get (snd
+       (Map.get_player_pos (World.get_map game.world.current_location)))); *)
     let prev_loc = game.world.current_location in
     handle_events state;
     if prev_loc <> game.world.current_location then game.in_transition <- true;
