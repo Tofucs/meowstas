@@ -122,19 +122,22 @@ let main () =
     let start_ticks = Sdl.get_ticks () in
     (if game.action_state = Battle then (
        match game.battle_state with
-       | Some _ -> run_battle_mode game
+       | Some _ ->
+           handle_events game;
+           run_battle_mode game
        | None ->
+           handle_events game;
            BattleMode.init game;
            run_battle_mode game)
      else if game.action_state = Menu then (
        match game.menu_state with
        | Some _ ->
-           handle_events game;
-           run_menu_mode game
+           run_menu_mode game;
+           handle_events game
        | None ->
-           handle_events game;
            MenuMode.init game;
-           run_menu_mode game)
+           run_menu_mode game;
+           handle_events game)
      else
        match game.roaming_state with
        | Some _ ->

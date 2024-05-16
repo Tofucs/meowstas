@@ -2,8 +2,8 @@ open Items
 open Meowsta
 
 let party_meowsta =
-  (* [| Meowsta_dictionary.meowberger; Meowsta_dictionary.clawson |] *)
-  Array.make 6 empty
+  [| Meowsta_dictionary.meowberger; Meowsta_dictionary.clawson |]
+(* Array.make 6 empty *)
 
 let (extra_meowsta : t list ref) =
   (* ref [ Meowsta_dictionary.meowberger; Meowsta_dictionary.clawson ] *)
