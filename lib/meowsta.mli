@@ -8,6 +8,7 @@ type t = {
   name : string;
   poke_type : mtype * mtype;
   ability : abilities;
+  evolution : int * t option;
   mutable exp : int;
   mutable level_threshold : int;
   mutable level : int;
@@ -26,7 +27,9 @@ type t = {
 }
 
 val get_item : t -> items
+(** [get_item t] gets the t.item *)
 val empty : t
+(** [empty] is an empty type t*)
 val attack : t -> t -> moves -> unit
 
 val is_dead : t -> bool
@@ -34,3 +37,5 @@ val is_dead : t -> bool
    so. Returns [false] if not.*)
 
 val check_levelup : t -> unit
+val check_evolve : t -> t
+val apply_booster_item : items -> moves -> float

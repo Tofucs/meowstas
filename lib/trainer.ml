@@ -1,9 +1,31 @@
 open Items
 open Meowsta
 
-let party_meowsta = Array.make 6 empty
-let (extra_meowsta : t list ref) = ref []
-let (item_bag : items list ref) = ref []
+let party_meowsta =
+  (* [| Meowsta_dictionary.meowberger; Meowsta_dictionary.clawson |] *)
+  Array.make 6 empty
+
+let (extra_meowsta : t list ref) =
+  (* ref [ Meowsta_dictionary.meowberger; Meowsta_dictionary.clawson ] *)
+  ref []
+
+let (item_bag : items list ref) =
+  (* ref [] *)
+  ref
+    [
+      HardStone;
+      BlackBelt;
+      HardStone;
+      BlackBelt;
+      Charcoal;
+      BurnHeal;
+      MysticWater;
+      NeverMeltIce;
+      TwistedSpoon;
+      GreatMeowstaBall;
+      GreatMeowstaBall;
+      UltraMeowstaBall;
+    ]
 
 let apply_medicine_item (item : items) (pokemon : t) =
   let match_medicine item pokemon =
