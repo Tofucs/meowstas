@@ -92,7 +92,7 @@ let run_roaming_mode state =
 
 let run_menu_mode state =
   MenuMode.handle_events state;
-  MenuMode.update state;
+  (* MenuMode.update state; *)
   MenuMode.render state
 
 let handle_events state =
