@@ -26,9 +26,6 @@ module MenuMode : GameMode = struct
 
   (*Reference to store the button *)
 
-  let button_action param =
-    print_endline ("Button pressed with param: " ^ string_of_int param)
-
   let rec count x lst =
     match lst with
     | [] -> 0
@@ -39,13 +36,13 @@ module MenuMode : GameMode = struct
     | [] -> false
     | h :: t -> h = x || contains x t
 
-  let render_bag_item renderer index item_string f x =
+  let render_bag_item renderer index item_string item =
     let x_val = 60 + (300 * (index mod 6)) in
     let y_val = 100 + (70 * (index / 6)) in
 
     let btn =
       Button.create renderer ~x:x_val ~y:y_val ~w:250 ~h:60 ~text:item_string
-        ?texture:None ~action:f ~action_param:x
+        ~item
     in
     btn
 
@@ -59,8 +56,7 @@ module MenuMode : GameMode = struct
       (fun i item ->
         if item != empty then
           party_buttons_list :=
-            render_bag_item state.renderer i item.name print_endline "123"
-            :: !party_buttons_list)
+            render_bag_item state.renderer i item.name NO :: !party_buttons_list)
       Trainer.party_meowsta
 
   let other_meowstas_buttons_list = ref []
@@ -72,7 +68,7 @@ module MenuMode : GameMode = struct
     List.iteri
       (fun i item ->
         other_meowstas_buttons_list :=
-          render_bag_item state.renderer i item.name print_endline "123"
+          render_bag_item state.renderer i item.name NO
           :: !other_meowstas_buttons_list)
       !Trainer.extra_meowsta
 
@@ -97,233 +93,225 @@ module MenuMode : GameMode = struct
               render_bag_item state.renderer i
                 ("HardStone x"
                 ^ string_of_int (count HardStone !Trainer.item_bag))
-                print_endline "HardStone"
+                HardStone
               :: !bag_buttons_list
         | BlackBelt ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("BlackBelt x"
                 ^ string_of_int (count BlackBelt !Trainer.item_bag))
-                print_endline "BlackBelt"
+                BlackBelt
               :: !bag_buttons_list
         | BlackGlasses ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("BlackGlasses x"
                 ^ string_of_int (count BlackGlasses !Trainer.item_bag))
-                print_endline "BlackGlasses"
+                BlackGlasses
               :: !bag_buttons_list
         | Charcoal ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("Charcoal x" ^ string_of_int (count Charcoal !Trainer.item_bag))
-                print_endline "Charcoal"
+                Charcoal
               :: !bag_buttons_list
         | DragonFang ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("DragonFang x"
                 ^ string_of_int (count DragonFang !Trainer.item_bag))
-                print_endline "DragonFang"
+                DragonFang
               :: !bag_buttons_list
         | FairyFeather ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("FairyFeather x"
                 ^ string_of_int (count FairyFeather !Trainer.item_bag))
-                print_endline "FairyFeather"
+                FairyFeather
               :: !bag_buttons_list
         | Magnet ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("Magnet x" ^ string_of_int (count Magnet !Trainer.item_bag))
-                print_endline "Magnet"
+                Magnet
               :: !bag_buttons_list
         | MetalCoat ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("MetalCoat x"
                 ^ string_of_int (count MetalCoat !Trainer.item_bag))
-                print_endline "MetalCoat"
+                MetalCoat
               :: !bag_buttons_list
         | MiracleSeed ->
             bag_buttons_list :=
               render_bag_item state.renderer i
-                ("MiracleSeed\n           x"
+                ("MiracleSeed x"
                 ^ string_of_int (count MiracleSeed !Trainer.item_bag))
-                print_endline "MiracleSeed"
+                MiracleSeed
               :: !bag_buttons_list
         | MysticWater ->
             bag_buttons_list :=
               render_bag_item state.renderer i
-                ("MysticWater\n           x"
+                ("MysticWater x"
                 ^ string_of_int (count MysticWater !Trainer.item_bag))
-                print_endline "MysticWater"
+                MysticWater
               :: !bag_buttons_list
         | NeverMeltIce ->
             bag_buttons_list :=
               render_bag_item state.renderer i
-                ("NeverMeltIce\n           x"
+                ("NeverMeltIce x"
                 ^ string_of_int (count NeverMeltIce !Trainer.item_bag))
-                print_endline "NeverMeltIce"
+                NeverMeltIce
               :: !bag_buttons_list
         | PoisonBarb ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("PoisonBarb x"
                 ^ string_of_int (count PoisonBarb !Trainer.item_bag))
-                print_endline "PoisonBarb"
+                PoisonBarb
               :: !bag_buttons_list
         | SharpBeak ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("SharpBeak x"
                 ^ string_of_int (count SharpBeak !Trainer.item_bag))
-                print_endline "SharpBeak"
+                SharpBeak
               :: !bag_buttons_list
         | SilkScarf ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("SilkScarf x"
                 ^ string_of_int (count SilkScarf !Trainer.item_bag))
-                print_endline "SilkScarf"
+                SilkScarf
               :: !bag_buttons_list
         | SilverPowder ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("SilverPowder x"
                 ^ string_of_int (count SilverPowder !Trainer.item_bag))
-                print_endline "SilverPowder"
+                SilverPowder
               :: !bag_buttons_list
         | SoftSand ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("SoftSand x" ^ string_of_int (count SoftSand !Trainer.item_bag))
-                print_endline "SoftSand"
+                SoftSand
               :: !bag_buttons_list
         | SpellTag ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("SpellTag x" ^ string_of_int (count SpellTag !Trainer.item_bag))
-                print_endline "SpellTag"
+                SpellTag
               :: !bag_buttons_list
         | TwistedSpoon ->
             bag_buttons_list :=
               render_bag_item state.renderer i
-                ("TwistedSpoon\n           x"
+                ("TwistedSpoon x"
                 ^ string_of_int (count TwistedSpoon !Trainer.item_bag))
-                print_endline "TwistedSpoon"
+                TwistedSpoon
               :: !bag_buttons_list
         | Potion ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("Potion x" ^ string_of_int (count Potion !Trainer.item_bag))
-                print_endline "Potion"
+                Potion
               :: !bag_buttons_list
         | SuperPotion ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("SuperPotion x"
                 ^ string_of_int (count SuperPotion !Trainer.item_bag))
-                print_endline "SuperPotion"
+                SuperPotion
               :: !bag_buttons_list
         | HyperPotion ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("HyperPotion x"
                 ^ string_of_int (count HyperPotion !Trainer.item_bag))
-                print_endline "HyperPotion"
+                HyperPotion
               :: !bag_buttons_list
         | Revive ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("Revive x" ^ string_of_int (count Revive !Trainer.item_bag))
-                print_endline "Revive"
+                Revive
               :: !bag_buttons_list
         | ParalyzeHeal ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("ParalyzeHeal x"
                 ^ string_of_int (count ParalyzeHeal !Trainer.item_bag))
-                print_endline "ParalyzeHeal"
+                ParalyzeHeal
               :: !bag_buttons_list
         | BurnHeal ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("BurnHeal x" ^ string_of_int (count BurnHeal !Trainer.item_bag))
-                print_endline "BurnHeal"
+                BurnHeal
               :: !bag_buttons_list
         | Antidote ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("Antidote x" ^ string_of_int (count Antidote !Trainer.item_bag))
-                print_endline "Antidote"
+                Antidote
               :: !bag_buttons_list
         | FreezeHeal ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("FreezeHeal x"
                 ^ string_of_int (count FreezeHeal !Trainer.item_bag))
-                print_endline "FreezeHeal"
+                FreezeHeal
               :: !bag_buttons_list
         | SleepHeal ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("SleepHeal x"
                 ^ string_of_int (count SleepHeal !Trainer.item_bag))
-                print_endline "SleepHeal"
+                SleepHeal
               :: !bag_buttons_list
         | MeowstaBall ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("MeowstaBall x"
                 ^ string_of_int (count MeowstaBall !Trainer.item_bag))
-                print_endline "MeowstaBall"
+                MeowstaBall
               :: !bag_buttons_list
         | GreatMeowstaBall ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("GreatMeowstaBall x"
                 ^ string_of_int (count GreatMeowstaBall !Trainer.item_bag))
-                print_endline "GreatMeowstaBall"
+                GreatMeowstaBall
               :: !bag_buttons_list
         | UltraMeowstaBall ->
             bag_buttons_list :=
               render_bag_item state.renderer i
                 ("UltraMeowstaBall x"
                 ^ string_of_int (count UltraMeowstaBall !Trainer.item_bag))
-                print_endline "UltraMeowstaBall"
+                UltraMeowstaBall
               :: !bag_buttons_list)
       !items_set (* Add item to set *)
-
-  (* let list_items_set = StringSet.to_list !items_set *)
-
-  (* Draw exit button *)
-  (* let exit_button_rect = Sdl.Rect.create ~x:530 ~y:15 ~w:90 ~h:50 in match
-     Sdl.render_copy ~dst:exit_button_rect renderer textures.exit with | Ok ()
-     -> () | Error (`Msg e) -> Sdl.log "Failed to\n render exit button: %s" e *)
 
   let init state =
     if state.menu_state = None then (
       let btn =
         Button.create state.renderer ~x:400 ~y:500 ~w:150 ~h:50 ~text:"PARTY"
-          ?texture:None ~action:print_endline ~action_param:"123"
+          ~item:NO
       in
       party_button := Some btn;
       let btn2 =
         Button.create state.renderer ~x:800 ~y:500 ~w:300 ~h:50
-          ~text:"OTHER MEOWSTAS" ?texture:None ~action:print_endline
-          ~action_param:"123"
+          ~text:"OTHER MEOWSTAS" ~item:NO
       in
       other_meowstas_button := Some btn2;
       let btn3 =
         Button.create state.renderer ~x:1300 ~y:500 ~w:120 ~h:50 ~text:"BAG"
-          ?texture:None ~action:print_endline ~action_param:"123"
+          ~item:NO
       in
       bag_button := Some btn3;
       let exitbtn =
         Button.create state.renderer ~x:1750 ~y:40 ~w:100 ~h:40 ~text:"EXIT"
-          ?texture:None ~action:print_endline ~action_param:""
+          ~item:NO
       in
       exit_button := Some exitbtn)
     else ()
@@ -355,9 +343,17 @@ module MenuMode : GameMode = struct
     end;
     Sdl.render_present renderer
 
-  (* let handle_events state = let e = Sdl.Event.create () in while
-     Sdl.poll_event (Some e) do match Sdl.Event.(enum (get e typ)) with | `Quit
-     -> state.is_running <- false | _ -> () done *)
+  let is_pressed rect x y =
+    let rx = Sdl.Rect.x rect in
+    let ry = Sdl.Rect.y rect in
+    let rw = Sdl.Rect.w rect in
+    let rh = Sdl.Rect.h rect in
+    x >= rx && x <= rx + rw && y >= ry && y <= ry + rh
+
+  let rec if_item lst x y =
+    match lst with
+    | [] -> None
+    | h :: t -> if is_pressed h.rect x y then Some h.item else if_item t x y
 
   let handle_events state =
     let e = Sdl.Event.create () in
@@ -370,7 +366,12 @@ module MenuMode : GameMode = struct
       | `Mouse_button_down ->
           let x = Sdl.Event.(get e mouse_button_x) in
           let y = Sdl.Event.(get e mouse_button_y) in
-          if x >= 1300 && x <= 1300 + 120 && y >= 500 && y <= 500 + 50 then (
+          if !bag_buttons_visible then
+            let possible_item = if_item !bag_buttons_list x y in
+            match possible_item with
+            | None -> ()
+            | Some _ -> print_endline "pressed"
+          else if x >= 1300 && x <= 1300 + 120 && y >= 500 && y <= 500 + 50 then (
             buttons_visible := false;
             bag_buttons_visible := true)
           else if x >= 800 && x <= 800 + 350 && y >= 500 && y <= 500 + 50 then (
@@ -388,15 +389,12 @@ module MenuMode : GameMode = struct
             party_buttons_visible := false;
             other_meowstas_buttons_visible := false;
             bag_buttons_visible := false)
-      | _ ->
-          if !bag_buttons_visible then
-            List.iter (fun b -> Button.handle_event b e) !bag_buttons_list
-          else if !party_buttons_visible then
-            List.iter (fun b -> Button.handle_event b e) !party_buttons_list
-          else if !other_meowstas_buttons_visible then
-            List.iter
-              (fun b -> Button.handle_event b e)
-              !other_meowstas_buttons_list
+      | _ -> ()
+      (* if !bag_buttons_visible then List.iter (fun b -> Button.handle_event b
+         e) !bag_buttons_list else if !party_buttons_visible then List.iter (fun
+         b -> Button.handle_event b e) !party_buttons_list else if
+         !other_meowstas_buttons_visible then List.iter (fun b ->
+         Button.handle_event b e) !other_meowstas_buttons_list *)
     done
 end
 
