@@ -5,10 +5,10 @@ open Meowstas.Map
 (*testing creation of maps*)
 
 let test_tiles1 =
-  [| [| W; NW; IW; INW |]; [| IW; W; NW; IW |]; [| W; NW; IW; INW |] |]
+  [| [| W; NW; NW; NW |]; [| W; W; NW; NW |]; [| W; NW; NW; W |] |]
 
-let test_tiles2 = [| [| W |]; [| NW |]; [| IW |]; [| INW |] |]
-let test_tiles3 = [| [| W; W; IW |]; [| W; W; IW |]; [| W; W; IW |] |]
+let test_tiles2 = [| [| W |]; [| NW |]; [| W |]; [| NW |] |]
+let test_tiles3 = [| [| W; W; NW |]; [| W; W; NW |]; [| W; W; NW |] |]
 let test_player = Meowstas.Player.make ()
 let test_map1 = make () "test map 1" test_tiles1 (3, 4)
 let test_map2 = make () "test map 2" test_tiles2 (4, 1)

@@ -18,25 +18,7 @@ type move_map_callback = string -> int * int -> unit
 
 exception PlayerUninstantiated
 
-let print_grid (grid : Tile.tile array array) =
-  Array.iter
-    (fun row ->
-      Array.iter
-        (fun tile ->
-          print_string
-            (match tile.interact with
-            | W -> "W " (* Walkable tile *)
-            | NW -> "NW " (* Non-walkable tile *)
-            | IW Dialouge -> "IW " (* Never really a thing? *)
-            | INW Dialouge -> "INW " (* Sign or object that prompts dialouge *)
-            | IW LoadMap -> "IW " (* Leading to next area walkable tile *)
-            | INW LoadMap -> "INW " (* Never really a thing *)))
-        row;
-      print_newline ())
-    grid
-
 let make () name grid (width, height) neighboring =
-  print_grid grid;
   {
     area_name = name;
     grid;

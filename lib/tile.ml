@@ -1,6 +1,7 @@
 type action =
   | LoadMap
   | Dialouge
+  | Encounter
       (**[action] determines the type of action an interactable tile is
          associated with. These constructors are parameters to help specifiy
          what actually is happening.*)
