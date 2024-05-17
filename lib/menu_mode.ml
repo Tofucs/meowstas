@@ -1,10 +1,6 @@
 open Tsdl
-open Tile
 open Button
-open Tsdl_image
-open Tsdl_ttf
 open Main_utils
-open Trainer
 open Meowsta
 open Items
 
