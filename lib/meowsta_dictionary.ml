@@ -46,6 +46,26 @@ let meowberger =
     [| ember; tackle; no; no |]
     [] 16 None
 
+let meowlder =
+  create_pokemon "Meowlder" (Rock, NO) NO 5 NO 100 14 10 8 NO
+    [| rock_toss; tackle; no; no |]
+    [] 16 None
+
+let catigue =
+  create_pokemon "Catigue" (Psychic, NO) NO 5 NO 100 14 10 8 NO
+    [| psychic; tackle; no; no |]
+    [] 16 None
+
+let purrfire =
+  create_pokemon "Purrfire" (Fire, NO) NO 5 NO 100 14 10 8 NO
+    [| ember; tackle; no; no |]
+    [] 16 None
+
+let purrtoad =
+  create_pokemon "Purrtoad" (Water, Poison) NO 5 NO 120 18 14 12 NO
+    [| water_gun; tackle; ice_ball; poison_jab |]
+    [] 16 None
+
 let clawson =
   create_pokemon "Clawson" (Ground, Dragon) NO 5 NO 100 14 10 8 NO
     [| take_down; tackle; no; no |]

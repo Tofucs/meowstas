@@ -8,9 +8,6 @@ type moves = {
   status_effect : status;
 }
 
-(*SORT ALPHABETICALLY (after no)*)
-(*Moves with recoil, healing*)
-
 let no = { name = ""; damage = 0; attack_type = NO; status_effect = NO }
 
 let absorb =
@@ -43,3 +40,17 @@ let take_down =
 
 let water_gun =
   { name = "water_gun"; damage = 10; attack_type = Water; status_effect = NO }
+
+let rock_toss =
+  { name = "rock_toss"; damage = 10; attack_type = Rock; status_effect = NO }
+
+let psychic =
+  { name = "psychic"; damage = 10; attack_type = Psychic; status_effect = NO }
+
+let poison_jab =
+  {
+    name = "poison_jab";
+    damage = 12;
+    attack_type = Poison;
+    status_effect = Poison;
+  }
