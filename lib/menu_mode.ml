@@ -36,7 +36,7 @@ module MenuMode : GameMode = struct
     let y_val = 100 + (70 * (index / 6)) in
 
     let btn =
-      Button.create renderer ~x:x_val ~y:y_val ~w:250 ~h:60 ~text:item_string
+      Button.create ~font_size:30 renderer ~x:x_val ~y:y_val ~w:250 ~h:60 ~text:item_string
         ~item ~meowsta:m
     in
     btn
