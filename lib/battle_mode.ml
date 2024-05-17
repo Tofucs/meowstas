@@ -13,17 +13,14 @@ module BattleMode : GameMode = struct
   (* positions start from top left, rectangle is defined by top left as well *)
   let pos1 = (425, 575)
   let pos2 = (1100, 325)
-  let in_animation = ref false
-  let animation_start = ref 0
-  let animation_duration = ref 0
-  let start_pos = ref (0, 0)
-  let end_pos = ref (0, 0)
   let background_file = "textures/battle-background.png"
   let player = ref pikachu
   let enemy = ref meowleaf
   let player_move = ref None
   let move_buttons = ref []
   let text_display = ref None
+  let delay = ref (-1l)
+  let start_tick = ref 0l
 
   let preload_textures renderer texture_table =
     let texture = load_texture_from_png renderer background_file in
@@ -106,17 +103,24 @@ module BattleMode : GameMode = struct
     Battle.reset_stats enemy
 
   let update state =
-    if !player_move = None then ()
+    if !player_move = None || !delay > 0l then (
+      if !delay > 0l then
+        if Int32.sub (Sdl.get_ticks ()) !start_tick > !delay then (
+          delay := -1l;
+          state.action_state <- Roaming)
+        else ())
     else
       let result = run_turn () in
       if result = 0 then (
         print_endline "You win!";
         reset !player !enemy;
-        state.action_state <- Roaming)
+        delay := 2000l;
+        start_tick := Sdl.get_ticks ())
       else if result = 1 then (
         print_endline "You lose :(";
         reset !player !enemy;
-        state.action_state <- Roaming)
+        delay := 2000l;
+        start_tick := Sdl.get_ticks ())
       else ();
       player_move := None
 
