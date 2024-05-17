@@ -27,7 +27,9 @@ type t = {
 }
 
 val get_item : t -> items
+(** [get_item t] gets the t.item *)
 val empty : t
+(** [empty] is an empty type t*)
 val attack : t -> t -> moves -> unit
 
 val is_dead : t -> bool

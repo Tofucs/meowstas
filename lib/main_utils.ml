@@ -40,10 +40,12 @@ type roaming_state = {
 }
 
 type battle_state = { mutable place_holder : string }
+type menu_state = { mutable place_holder : string }
 
 type action_state =
   | Roaming
   | Battle
+  | Menu
 
 type global_state = {
   mutable is_running : bool;
@@ -53,7 +55,9 @@ type global_state = {
   mutable action_state : action_state;
   mutable battle_state : battle_state option;
   mutable roaming_state : roaming_state option;
+  mutable menu_state : menu_state option;
   texture_table : (string, Sdl.texture) Hashtbl.t;
+  mutable previous_state : action_state;
 }
 
 (* the global state is initialized in main, each action state is initialized by

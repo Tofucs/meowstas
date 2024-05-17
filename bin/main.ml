@@ -21,6 +21,7 @@ let init () =
   with
   | Error (`Msg e) ->
       Sdl.log "Create window error: %s" e;
+      Sdl.log "Create window error: %s" e;
       exit 1
   | Ok w ->
       (window := Some w;
