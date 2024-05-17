@@ -33,6 +33,7 @@ type roaming_state = {
   world : World.world;
   mutable in_animation : bool;
   mutable in_transition : bool;
+  mutable current_location : int * int;
   mutable animation_start : int;
   mutable animation_duration : int;
   mutable start_pos : int * int;

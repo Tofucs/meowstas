@@ -15,6 +15,7 @@ type map = {
    tile.*)
 
 type move_map_callback = string -> int * int -> unit
+type random_encounter_fun = Main_utils.global_state -> bool
 
 exception PlayerUninstantiated
 
@@ -77,7 +78,8 @@ let within_bounds tile map =
   && extract_int (snd tile) >= 0
   && extract_int (snd tile) < get_height map
 
-let update_location map attempt_move (callback : move_map_callback) =
+let update_location map attempt_move (callback : move_map_callback)
+    (encounter_callback : random_encounter_fun) =
   match map.player_pos with
   | None, _ -> raise PlayerUninstantiated
   | _, None -> raise PlayerUninstantiated

@@ -185,6 +185,7 @@ module RoamingMode : GameMode = struct
             world;
             in_animation = false;
             in_transition = false;
+            current_location = (4, 4);
             animation_start = 0;
             animation_duration = 0;
             start_pos = (0, 0);
@@ -195,7 +196,17 @@ module RoamingMode : GameMode = struct
       in
       preload_textures state.renderer state.texture_table;
       Map.create_player (World.get_map world.current_location) (Some 4, Some 4))
-    else ()
+    else
+      let world = World.get_instance () in
+      let roaming = Option.get state.roaming_state in
+      let loc = roaming.current_location in
+      let _ =
+        Sdl.set_render_draw_blend_mode state.renderer Sdl.Blend.mode_blend
+      in
+      preload_textures state.renderer state.texture_table;
+      Map.create_player
+        (World.get_map world.current_location)
+        (Some (fst loc), Some (snd loc))
 
   let update state = print_int (snd state.window_size)
 
@@ -215,25 +226,45 @@ module RoamingMode : GameMode = struct
                 if
                   Map.update_location map Up World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Up
+                then start_animation game_state map Up;
+                game_state.current_location <-
+                  ( fst game_state.current_location,
+                    snd game_state.current_location - 1 )
             | 0x61 ->
                 if
                   Map.update_location map Left World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Left
+                then start_animation game_state map Left;
+                game_state.current_location <-
+                  ( fst game_state.current_location - 1,
+                    snd game_state.current_location )
             | 0x73 ->
                 if
                   Map.update_location map Down World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Down
+                then start_animation game_state map Down;
+                game_state.current_location <-
+                  ( fst game_state.current_location,
+                    snd game_state.current_location + 1 )
             | 0x64 ->
                 if
                   Map.update_location map Right World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Right
+                then start_animation game_state map Right;
+                game_state.current_location <-
+                  ( fst game_state.current_location + 1,
+                    snd game_state.current_location )
             | _ -> ())
       | _ -> ()
     done
+
+  let random_encounter (state : global_state) =
+    Random.self_init ();
+    let spawn = Random.float Float.one < 0.2 in
+    if spawn then (
+      state.action_state <- Battle;
+      true)
+    else false
 
   let render state =
     let renderer = state.renderer in

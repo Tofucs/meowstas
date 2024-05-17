@@ -22,7 +22,7 @@ let grass_tile_alt =
 
 let tall_grass_tile =
   {
-    interact = W;
+    interact = IW Encounter;
     terrain = Grass;
     deco1 = true;
     deco2 = false;
