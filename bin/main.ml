@@ -1,6 +1,5 @@
 open Tsdl
 open Meowstas
-open Tile
 open Tsdl_image
 open Tsdl_ttf
 open Main_utils

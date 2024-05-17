@@ -23,6 +23,7 @@ module BattleMode : GameMode = struct
   let enemy = ref meowleaf
   let player_move = ref None
   let move_buttons = ref []
+  let text_display = ref None
 
   let preload_textures renderer texture_table =
     let texture = load_texture_from_png renderer background_file in
@@ -50,6 +51,13 @@ module BattleMode : GameMode = struct
             :: !move_buttons)
       player.moveset
 
+  let generate_text_display renderer =
+    text_display :=
+      Some
+        (Label.create ~font_size:25 renderer ~x:750 ~y:200 ~text:" \n \n \n \n "
+           ~font_color:(Sdl.Color.create ~r:255 ~g:255 ~b:255 ~a:255));
+    Battle.text_display := !text_display
+
   let init state =
     if state.battle_state = None then
       state.battle_state <-
@@ -59,10 +67,12 @@ module BattleMode : GameMode = struct
             enemy = Meowsta_dictionary.meowleaf;
           }
     else ();
+
     preload_textures state.renderer state.texture_table;
     player := (Option.get state.battle_state).player;
     enemy := (Option.get state.battle_state).enemy;
-    generate_move_buttons state.renderer !player
+    generate_move_buttons state.renderer !player;
+    generate_text_display state.renderer
 
   let run_turn () =
     if !player.speed >= !enemy.speed then begin
@@ -91,15 +101,21 @@ module BattleMode : GameMode = struct
     end;
     if is_dead !enemy then 0 else if is_dead !player then 1 else 2
 
+  let reset player enemy =
+    Battle.reset_stats player;
+    Battle.reset_stats enemy
+
   let update state =
     if !player_move = None then ()
     else
       let result = run_turn () in
       if result = 0 then (
         print_endline "You win!";
+        reset !player !enemy;
         state.action_state <- Roaming)
       else if result = 1 then (
         print_endline "You lose :(";
+        reset !player !enemy;
         state.action_state <- Roaming)
       else ();
       player_move := None
@@ -113,7 +129,15 @@ module BattleMode : GameMode = struct
         in
         ()
 
-  let render_moves () = List.iter (fun b -> Button.render b) !move_buttons
+  let render_moves renderer =
+    let prompt =
+      Button.create ~font_size:35 renderer ~x:880 ~y:750 ~w:250 ~h:60
+        ~text:"Choose a move"
+        ~font_color:(Sdl.Color.create ~r:255 ~g:255 ~b:255 ~a:180)
+        ~item:NO ~meowsta:!player
+    in
+    Button.render prompt;
+    List.iter (fun b -> Button.render b) !move_buttons
 
   let render state =
     let renderer = state.renderer in
@@ -124,7 +148,8 @@ module BattleMode : GameMode = struct
     in
     render_pokemon state !player.name pos1;
     render_pokemon state !enemy.name pos2;
-    render_moves ();
+    render_moves state.renderer;
+    Label.render (Option.get !text_display);
     Sdl.render_present renderer
 
   let is_pressed rect x y =
@@ -141,7 +166,6 @@ module BattleMode : GameMode = struct
       | h :: t -> if is_pressed h.rect x y then Some h else if_item t x y)
 
   let move_from_name name =
-    print_endline name;
     let temp = Array.copy !player.moveset in
     Array.sort
       (fun (a : Moves.moves) b ->
