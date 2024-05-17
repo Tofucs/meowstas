@@ -2,13 +2,8 @@
 2. Open terminal in the root folder of meowstas
 3. If necessary install the OCaml Graphics library by running [opam install
 graphics] and install the font by running [sudo apt-get install xfonts-base]
+4. In addition, these libraries need to be installed - tsdl, tdsl-image, tsdl-ttf. Run opam install '' for all the previously mentioned libraries.
 4. Run [dune exec meowstas] to start the game
-5. It will show something like this 
-
-[A wild Bulbasaur appears!           
-1: Thunder Shock
-2: Quick Attack
-Choose a move (type number):]
-
-6. Inputting 1 will choose attack 1, and 2 chooses attack 2
-7. Play until either you or the AI pokemon dies, then the game is over and you have to run exec again
+5. A GUI will appear. Use WASD to move around, and walk down the paths to move around the map! If you encounter tall textured grass, be wary, a pokemon might appear to fight! Click to choose the move you want to fight with!
+6. If a pokemon appears, the GUI will change. 
+7. Play until either you or the AI pokemon dies, then the battle is over and you go back to roaming mode.
