@@ -25,8 +25,10 @@ git-repo: "https://github.com/Tofucs/meowstas"
 demo-video-url: ""
 # Write a short, attention-grabbing description of your project.
 desc: >
-  Our project is a cat pokemon game where players can collect cat-pokemon and battle with gym leaders.
-  The gym leaders are AI bots that choose attacks semi-randomly.
-  Pokemon also have status effects that can be inflicted on them by attacks, and there are items that heal or buff pokemon.
-
-  Currently, it is completely terminal based, but in the future, we are looking to create a GUI.
+  Our project is a cat pokemon game where players can collect cat-pokemon and battle with enemy pokemon.
+  The enemy pokemon are AI bots that choose attacks semi-randomly and our battle feature is quite fleshed
+  out with status conditions, item usage, type effectiveness, etc.
+  Our program also has map traversal akin to old 2d pokémon games. It is here where you can trigger random
+  encounter pokemon battles.
+  We utilize GUI in both our battles and map traversal, and we even created custom textures for both 
+  pokémon and map textures.
