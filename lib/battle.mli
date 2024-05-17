@@ -3,6 +3,8 @@ open Moves
 open MType
 open Status
 
+val text_display : Label.t option ref
+
 val check_effective : moves -> t -> unit
 (**[check_effective move enemy_pokemon] checks if [move] created a super
    effective hit against [enemy_pokemon] and prints the information to the user *)

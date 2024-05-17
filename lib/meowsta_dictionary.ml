@@ -78,4 +78,5 @@ let meowtter =
     [| water_gun; tackle; no; no |]
     [] 16 None
 
-let meowsta_list = [ pikachu; meowleaf; meowberger; clawson; meowtter ]
+let meowsta_list =
+  [ pikachu; meowleaf; meowberger; clawson; meowtter; purrtoad ]

@@ -173,6 +173,15 @@ let bottom_right_path =
     texture = "textures/corner-path-bottom-right.bmp";
   }
 
+let clarkson =
+  {
+    interact = W;
+    terrain = Path;
+    deco1 = false;
+    deco2 = false;
+    texture = "textures/final-boss_96.png";
+  }
+
 let textured_path_tile =
   {
     interact = W;
@@ -237,6 +246,7 @@ let tile_list =
     brp;
     wt;
     sd;
+    clarkson;
   ]
 
 (*maps - all should be 20*11 tiles, "smaller" or irregular sized maps can be
@@ -252,9 +262,9 @@ let shore1map =
       [tr; tr; tr; tr; tr; tr; tr; tr; rp; pa; lp; tr; tr; tr; tr; tr; tr; tr; tr; tr];
       [tr; tr; tr; tr; tr; tr; tr; gt; rp; pt; lp; gt; tr; tr; tr; tr; tr; tr; tr; tr];
       [gt; tr; tr; tr; gt; gt; brp; bp; tlg; pt; lp; gt; gt; gt; tr; tr; gt; gt; gt; gt];
-      [bp; gt; gt; gt; gt; gr; rp; pa; pt; brg; tlp; gt; gt; gt; tr; gt; gt; gt; gt; gt];
-      [pa; gt; gt; gt; gt; bp; tlg; brg; tp; tlp; gt; gt; gt; gt; gt; gt; gt; gt; tr; gt];
-      [tp; gt; gt; gt; gt; tp; tp; tlp; gr; gr; gt; gt; gt; gt; gt; gt; gt; gt; gt; gt];
+      [bp; gr; gr; gr; gr; bp; tlg; pa; pt; brg; tlp; gt; gt; gt; tr; gt; gt; gt; gt; gt];
+      [pa; gr; gr; gr; gr; pa; pa; pa; tp; tlp; gt; gt; gt; gt; gt; gt; gt; gt; tr; gt];
+      [tp; gr; gr; gr; gr; tp; tp; tlp; gr; gr; gt; gt; gt; gt; gt; gt; gt; gt; gt; gt];
       [sd; sd; sd; sd; gt; gt; gt; gt; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd];
       [wt; sd; sd; sd; sd; sd; sd; sd; sd; sd; sd; wt; wt; wt; wt; wt; wt; wt; wt; wt];
       [wt; wt; wt; wt; sd; sd; sd; sd; sd; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt; wt];
@@ -321,3 +331,22 @@ let route3 =
       in
       let convert_row row = Array.of_list row in
       Array.of_list (List.map convert_row tiles) [@@ocamlformat "disable"]
+
+let sand_castle =
+  let tiles =
+    [
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; gt; gt];
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; gt; gt];
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; gt; gt];
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; wt; wt; pt; pt; pt; pt; pt; gt; gt];
+      [gt; gt; gt; gr; sd; pt; pt; pt; pt; clarkson; wt; wt; wt; wt; pt; pt; pt; pt; gt; gt];
+      [gt; gt; gt; gr; sd; pt; pt; pt; pt; pt; wt; wt; wt; wt; pt; pt; pt; pt; gt; gt];
+      [gt; gt; gt; gr; sd; pt; pt; pt; pt; pt; pt; wt; wt; pt; pt; pt; pt; pt; gt; gt];
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; gt; gt];
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; gt; gt];
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; gt; gt];
+      [tr; tr; tr; gr; sd; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; pt; gt; gt];
+    ]
+  in
+  let convert_row row = Array.of_list row in
+  Array.of_list (List.map convert_row tiles) [@@ocamlformat "disable"]
