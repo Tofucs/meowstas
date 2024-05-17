@@ -1,6 +1,4 @@
 open Map
-open Player
-open Tilemaps
 
 type game_map = map list
 (** Type alias for a list of maps. *)
