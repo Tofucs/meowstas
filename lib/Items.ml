@@ -1,3 +1,4 @@
+(**type [items] represents the list of available items a player may use*)
 type items =
   | NO
   (*Booster*)

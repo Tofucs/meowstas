@@ -1,3 +1,4 @@
+(**type [mytype] represents the catalog of all pokemon types*)
 type mtype =
   | NO
   | Normal
@@ -19,7 +20,8 @@ type mtype =
   | Electric
   | Ghost
 
-(**Note: call twice since pokemon have two types max*)
+(**[type_multiplier t1 t2] checks the moves type with the enemy pokemons type to
+   find the damage multiplier*)
 let type_multiplier (t1 : mtype) (t2 : mtype) =
   match (t1, t2) with
   | _, NO -> 1.

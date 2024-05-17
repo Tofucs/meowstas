@@ -5,7 +5,8 @@ open Items
 open Abilities
 open Status
 
-(**Add Learnset*)
+(**[create_pokemon] takes in the parameters of the meowsta compilation unit and
+   creates a corresponding meowsta*)
 let create_pokemon name poke_type ability level item max_hp max_attack
     max_defense max_speed status moveset learnset evolve_lv evolve_meowsta =
   {
