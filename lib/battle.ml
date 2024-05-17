@@ -75,9 +75,6 @@ let apply_status pokemon =
       Printf.printf "%s took damage from burn.\n" pokemon.name
   | _ -> ()
 
-(*TODO: IMPLEMENT LEVEL UP + ADDING MOVES. IMPLEMENT ABILITIES. Implement
-  Evolution *)
-
 let player_sleep_counter = ref 3
 let enemy_sleep_counter = ref 3
 
