@@ -15,6 +15,8 @@ type t = {
 (** [type t] is the button type*)
 
 val create :
+  ?font_size:int ->
+  ?font_color:Sdl.color ->
   Sdl.renderer ->
   x:int ->
   y:int ->
