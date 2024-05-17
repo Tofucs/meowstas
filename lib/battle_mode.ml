@@ -55,7 +55,7 @@ module BattleMode : GameMode = struct
       state.battle_state <-
         Some
           {
-            player = Meowsta_dictionary.pikachu;
+            player = state.party_meowsta.(0);
             enemy = Meowsta_dictionary.meowleaf;
           }
     else ();

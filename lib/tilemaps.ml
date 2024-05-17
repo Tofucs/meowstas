@@ -22,11 +22,11 @@ let grass_tile_alt =
 
 let tall_grass_tile =
   {
-    interact = W;
+    interact = IW Encounter;
     terrain = Grass;
-    deco1 = true;
+    deco1 = false;
     deco2 = false;
-    texture = "textures/grass-normal.bmp";
+    texture = "textures/grass-detail.bmp";
   }
 
 let rock_grass_tile =
@@ -194,7 +194,7 @@ let sand_tile =
 (*truncated nicknames*)
 let tgt = tall_grass_tile
 let gt = grass_tile
-let gr = grass_tile_alt
+let gr = tall_grass_tile
 let rgt = rock_grass_tile
 let tr = tree_grass_tile
 let trg = top_right_grass
@@ -302,3 +302,22 @@ let route4 =
     in
     let convert_row row = Array.of_list row in
     Array.of_list (List.map convert_row tiles) [@@ocamlformat "disable"]
+
+let route3 = 
+      let tiles =
+        [
+          [tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr];
+          [tr; tr; tr; tr; gr; gr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; gt; gt];
+          [gt; tr; tr; gr; gt; gt; gt; gt; gt; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+          [bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp; bp];
+          [pa; pa; pa; pt; pt; pa; pa; pa; pa; pt; pa; pa; pa; pa; pa; pa; pa; pt; pt; pa];
+          [tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp; tp];
+          [gt; gr; gr; gr; gt; tr; tr; gr; gr; gr; gr; gt; gt; gt; gr; gr; gt; gt; gt; gt];
+          [gt; gr; gr; gr; gt; tr; gt; gr; gr; gr; gr; gt; tr; tr; gr; gr; gt; gt; gt; gt];
+          [gt; gr; gr; tr; gr; tr; gt; gt; gt; gt; gt; tr; wt; wt; tr; gr; gt; gt; gt; gt];
+          [gt; tr; tr; tr; tr; tr; gt; gt; gt; gt; gt; gr; wt; wt; tr; gr; gt; gt; gt; gt];
+          [gt; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr; tr];
+        ]
+      in
+      let convert_row row = Array.of_list row in
+      Array.of_list (List.map convert_row tiles) [@@ocamlformat "disable"]

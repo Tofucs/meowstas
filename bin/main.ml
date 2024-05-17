@@ -7,6 +7,8 @@ open Main_utils
 open Battle_mode
 open Roaming_mode
 open Menu_mode
+open Trainer
+open Meowsta_dictionary
 
 let init () =
   let _ = Sdl.init Sdl.Init.everything in
@@ -41,11 +43,12 @@ let init () =
         renderer = Option.get !renderer;
         window = Option.get !window;
         window_size;
-        action_state = Battle;
+        action_state = Roaming;
         battle_state = None;
         roaming_state = None;
         texture_table = Hashtbl.create 20;
         previous_state = Roaming;
+        party_meowsta = [| meowtter |];
       }
 
 let on_destroy state =

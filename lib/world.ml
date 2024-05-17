@@ -17,7 +17,8 @@ let initialize () =
     [
       Map.make () "Shore1" shore1map (20, 11) [ ""; "Route4"; "Shore2"; "" ];
       Map.make () "Shore2" shore2map (20, 11) [ "Shore1"; ""; ""; "" ];
-      Map.make () "Route4" route4 (20, 11) [ ""; ""; ""; "Shore1" ];
+      Map.make () "Route4" route4 (20, 11) [ "Route3"; ""; ""; "Shore1" ];
+      Map.make () "Route3" route3 (20, 11) [ ""; ""; "Route4"; "" ];
     ]
   in
   let map_table = Hashtbl.create 10 in

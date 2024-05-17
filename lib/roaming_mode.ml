@@ -8,6 +8,7 @@ module RoamingMode : GameMode = struct
   type t = global_state
 
   let tile_size = ref 96
+  let () = Random.self_init ()
 
   let preload_textures renderer texture_table =
     List.iter
@@ -185,6 +186,7 @@ module RoamingMode : GameMode = struct
             world;
             in_animation = false;
             in_transition = false;
+            player_location = (4, 4);
             animation_start = 0;
             animation_duration = 0;
             start_pos = (0, 0);
@@ -195,8 +197,19 @@ module RoamingMode : GameMode = struct
       in
       preload_textures state.renderer state.texture_table;
       Map.create_player (World.get_map world.current_location) (Some 4, Some 4))
-    else ()
+    else
+      let world = World.get_instance () in
+      let _ =
+        Sdl.set_render_draw_blend_mode state.renderer Sdl.Blend.mode_blend
+      in
+      let roam = Option.get state.roaming_state in
+      let loc = roam.player_location in
+      preload_textures state.renderer state.texture_table;
+      Map.create_player
+        (World.get_map world.current_location)
+        (Some (fst loc), Some (snd loc))
 
+  let random_encounter () = Random.int 10 > 7
   let update state = ()
 
   let handle_events state =
@@ -208,7 +221,6 @@ module RoamingMode : GameMode = struct
       match Sdl.Event.(enum (get e typ)) with
       | `Quit -> state.is_running <- false
       | `Key_down -> (
-          Printf.printf "keydown";
           if not game_state.in_animation then
             let key = Sdl.Event.(get e keyboard_keycode) in
             match key with
@@ -216,25 +228,70 @@ module RoamingMode : GameMode = struct
                 if
                   Map.update_location map Up World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Up
+                then (
+                  start_animation game_state map Up;
+                  game_state.player_location <-
+                    ( fst game_state.player_location,
+                      snd game_state.player_location - 1 );
+                  begin
+                    if random_encounter () then
+                      match
+                        (Map.query_tile map (Map.get_player_pos map)).interact
+                      with
+                      | IW Encounter -> state.action_state <- Battle
+                      | _ -> ()
+                  end)
             | 0x61 ->
                 if
                   Map.update_location map Left World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Left
+                then (
+                  start_animation game_state map Left;
+                  game_state.player_location <-
+                    ( fst game_state.player_location - 1,
+                      snd game_state.player_location );
+                  begin
+                    if random_encounter () then
+                      match
+                        (Map.query_tile map (Map.get_player_pos map)).interact
+                      with
+                      | IW Encounter -> state.action_state <- Battle
+                      | _ -> ()
+                  end)
             | 0x73 ->
                 if
                   Map.update_location map Down World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Down
+                then (
+                  start_animation game_state map Down;
+                  game_state.player_location <-
+                    ( fst game_state.player_location,
+                      snd game_state.player_location + 1 );
+                  begin
+                    if random_encounter () then
+                      match
+                        (Map.query_tile map (Map.get_player_pos map)).interact
+                      with
+                      | IW Encounter -> state.action_state <- Battle
+                      | _ -> ()
+                  end)
             | 0x64 ->
                 if
                   Map.update_location map Right World.update_map
                   && prev_loc = game_state.world.current_location
-                then start_animation game_state map Right
-            | x when x = Sdl.K.m ->
-                state.previous_state <- state.action_state;
-                state.action_state <- Menu
+                then (
+                  start_animation game_state map Right;
+                  game_state.player_location <-
+                    ( fst game_state.player_location + 1,
+                      snd game_state.player_location );
+                  begin
+                    if random_encounter () then
+                      match
+                        (Map.query_tile map (Map.get_player_pos map)).interact
+                      with
+                      | IW Encounter -> state.action_state <- Battle
+                      | _ -> ()
+                  end)
             | _ -> ())
       | _ -> ()
     done
