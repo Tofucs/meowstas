@@ -289,41 +289,38 @@ module MenuMode : GameMode = struct
       !items_set (* Add item to set *)
 
   let init state =
-    if state.menu_state = None then (
-      let btn =
-        Button.create state.renderer ~x:400 ~y:500 ~w:150 ~h:50 ~text:"PARTY"
-          ~item:NO ~meowsta:Meowsta_dictionary.clawson
-      in
-      party_button := Some btn;
-      let btn2 =
-        Button.create state.renderer ~x:800 ~y:500 ~w:300 ~h:50
-          ~text:"OTHER MEOWSTAS" ~item:NO ~meowsta:Meowsta_dictionary.clawson
-      in
-      other_meowstas_button := Some btn2;
-      let btn3 =
-        Button.create state.renderer ~x:1300 ~y:500 ~w:120 ~h:50 ~text:"BAG"
-          ~item:NO ~meowsta:Meowsta_dictionary.clawson
-      in
-      bag_button := Some btn3;
-      let exitbtn =
-        Button.create state.renderer ~x:1750 ~y:40 ~w:100 ~h:40 ~text:"EXIT"
-          ~item:NO ~meowsta:Meowsta_dictionary.clawson
-      in
-      exit_button := Some exitbtn)
-    else ()
+    let btn =
+      Button.create state.renderer ~x:400 ~y:500 ~w:150 ~h:50 ~text:"PARTY"
+        ~item:NO ~meowsta:Meowsta_dictionary.clawson
+    in
+    party_button := Some btn;
+    let btn2 =
+      Button.create state.renderer ~x:800 ~y:500 ~w:300 ~h:50
+        ~text:"OTHER MEOWSTAS" ~item:NO ~meowsta:Meowsta_dictionary.clawson
+    in
+    other_meowstas_button := Some btn2;
+    let btn3 =
+      Button.create state.renderer ~x:1300 ~y:500 ~w:120 ~h:50 ~text:"BAG"
+        ~item:NO ~meowsta:Meowsta_dictionary.clawson
+    in
+    bag_button := Some btn3;
+    let exitbtn =
+      Button.create state.renderer ~x:1750 ~y:40 ~w:100 ~h:40 ~text:"EXIT"
+        ~item:NO ~meowsta:Meowsta_dictionary.clawson
+    in
+    exit_button := Some exitbtn
 
   let update state = ()
-  (* print_int (fst state.window_size) *)
 
   let render state =
     let renderer = state.renderer in
     let _ = Sdl.render_clear renderer in
 
-    if !buttons_visible then begin
+    if !buttons_visible then (
       Option.iter (fun btn -> Button.render btn) !party_button;
       Option.iter (fun btn -> Button.render btn) !other_meowstas_button;
       Option.iter (fun btn -> Button.render btn) !bag_button
-    end
+    )
     else if !bag_buttons_visible then (
       List.iter (fun b -> Button.render b) !bag_buttons_list;
       Option.iter (fun btn -> Button.render btn) !exit_button)

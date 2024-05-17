@@ -3,6 +3,9 @@ open Tile
 open Tsdl_image
 open Tsdl_ttf
 open Main_utils
+open Meowsta
+open Meowsta_dictionary
+open Battle
 
 module BattleMode : GameMode = struct
   type t = global_state
@@ -16,24 +19,73 @@ module BattleMode : GameMode = struct
   let start_pos = ref (0, 0)
   let end_pos = ref (0, 0)
   let background_file = "textures/battle-background.png"
-  let pokemon1_file = "textures/electro_base.png"
-  let pokemon2_file = "textures/grass_base.png"
+  let player = ref pikachu
+  let enemy = ref meowleaf
+  let player_move = ref None
 
   let preload_textures renderer texture_table =
     let texture = load_texture_from_png renderer background_file in
     Hashtbl.add texture_table background_file texture;
-    let texture = load_texture_from_png renderer pokemon1_file in
-    Hashtbl.add texture_table pokemon1_file texture;
-    let texture = load_texture_from_png renderer pokemon2_file in
-    Hashtbl.add texture_table pokemon2_file texture
+    List.iter
+      (fun meowsta ->
+        let path = "textures/" ^ meowsta.name ^ ".png" in
+        if not (Hashtbl.mem texture_table path) then
+          let texture = load_texture_from_png renderer path in
+          Hashtbl.add texture_table meowsta.name texture)
+      Meowsta_dictionary.meowsta_list
+
+  let run_turn () =
+    if !player.speed >= !enemy.speed then begin
+      battle_turn !player !enemy (Option.get !player_move);
+      if is_dead !enemy || is_dead !player then ()
+      else begin
+        battle_turn_enemy !player !enemy;
+        if is_dead !enemy || is_dead !player then ()
+        else begin
+          apply_status !enemy;
+          apply_status !player
+        end
+      end
+    end
+    else begin
+      battle_turn_enemy !player !enemy;
+      if is_dead !enemy || is_dead !player then ()
+      else begin
+        battle_turn !player !enemy (Option.get !player_move);
+        if is_dead !enemy || is_dead !player then ()
+        else begin
+          apply_status !enemy;
+          apply_status !player
+        end
+      end
+    end;
+    if is_dead !enemy then 0 else if is_dead !player then 1 else 2
 
   let init state =
     if state.battle_state = None then (
-      state.battle_state <- Some { place_holder = "battle started!" };
+      state.battle_state <-
+        Some
+          {
+            player = Meowsta_dictionary.pikachu;
+            enemy = Meowsta_dictionary.meowleaf;
+          };
       preload_textures state.renderer state.texture_table)
-    else ()
+    else ();
+    player := (Option.get state.battle_state).player;
+    enemy := (Option.get state.battle_state).enemy
 
-  let update state = ()
+  let update state =
+    if !player_move = None then ()
+    else
+      let result = run_turn () in
+      if result = 0 then (
+        print_endline "You win!";
+        state.action_state <- Roaming)
+      else if result = 1 then (
+        print_endline "You lose :(";
+        state.action_state <- Roaming)
+      else ();
+      player_move := None
 
   let render_pokemon state sprite_name = function
     | x, y ->
@@ -51,8 +103,8 @@ module BattleMode : GameMode = struct
       Sdl.render_copy renderer
         (Hashtbl.find state.texture_table background_file)
     in
-    render_pokemon state pokemon1_file pos1;
-    render_pokemon state pokemon2_file pos2;
+    render_pokemon state !player.name pos1;
+    render_pokemon state !enemy.name pos2;
     Sdl.render_present renderer
 
   let handle_events state =
@@ -60,6 +112,12 @@ module BattleMode : GameMode = struct
     while Sdl.poll_event (Some e) do
       match Sdl.Event.(enum (get e typ)) with
       | `Quit -> state.is_running <- false
+      | `Key_down ->
+          let key = Sdl.Event.(get e keyboard_keycode) in
+          if key = Sdl.K.m then (
+            state.action_state <- Menu;
+            state.previous_state <- Battle)
+          else if key = Sdl.K.space then player_move := Some !player.moveset.(0)
       | _ -> ()
     done
 end

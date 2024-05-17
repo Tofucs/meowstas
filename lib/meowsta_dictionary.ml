@@ -46,9 +46,8 @@ let meowberger =
     [] 16 None
 
 let clawson =
-  create_pokemon "Purrfesor Meowchael Clawson" (Ground, Dragon) NO 5 NO 100 14
-    10 8 NO
-    [| water_gun; tackle; no; no |]
+  create_pokemon "Clawson" (Ground, Dragon) NO 5 NO 100 14 10 8 NO
+    [| take_down; tackle; no; no |]
     [] 16 None
 
 let weak_meowberger = { meowberger with hp = 0 }
@@ -57,3 +56,5 @@ let meowtter =
   create_pokemon "Meowtter" (Water, NO) NO 5 NO 90 10 13 9 NO
     [| water_gun; tackle; no; no |]
     [] 16 None
+
+let meowsta_list = [ pikachu; meowleaf; meowberger; clawson; meowtter ]
