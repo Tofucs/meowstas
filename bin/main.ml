@@ -47,7 +47,7 @@ let init () =
         roaming_state = None;
         texture_table = Hashtbl.create 20;
         previous_state = Roaming;
-        party_meowsta = [| meowtter |];
+        party_meowsta = [| purrtoad |];
       }
 
 let on_destroy state =
