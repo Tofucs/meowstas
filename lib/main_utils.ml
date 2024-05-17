@@ -1,5 +1,6 @@
 open Tsdl
 open Tsdl_image
+open Meowsta
 
 let load_texture_from_png renderer file =
   match Image.load file with
@@ -39,11 +40,15 @@ type roaming_state = {
   mutable end_pos : int * int;
 }
 
-type battle_state = { mutable place_holder : string }
+type battle_state = {
+  mutable player : Meowsta.t;
+  mutable enemy : Meowsta.t;
+}
 
 type action_state =
   | Roaming
   | Battle
+  | Menu
 
 type global_state = {
   mutable is_running : bool;
@@ -54,6 +59,7 @@ type global_state = {
   mutable battle_state : battle_state option;
   mutable roaming_state : roaming_state option;
   texture_table : (string, Sdl.texture) Hashtbl.t;
+  mutable previous_state : action_state;
 }
 
 (* the global state is initialized in main, each action state is initialized by

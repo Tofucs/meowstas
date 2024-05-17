@@ -6,6 +6,7 @@ open Tsdl_ttf
 open Main_utils
 open Battle_mode
 open Roaming_mode
+open Menu_mode
 
 let init () =
   let _ = Sdl.init Sdl.Init.everything in
@@ -20,6 +21,7 @@ let init () =
       Sdl.Window.opengl
   with
   | Error (`Msg e) ->
+      Sdl.log "Create window error: %s" e;
       Sdl.log "Create window error: %s" e;
       exit 1
   | Ok w ->
@@ -39,10 +41,11 @@ let init () =
         renderer = Option.get !renderer;
         window = Option.get !window;
         window_size;
-        action_state = Roaming;
+        action_state = Battle;
         battle_state = None;
         roaming_state = None;
         texture_table = Hashtbl.create 20;
+        previous_state = Roaming;
       }
 
 let on_destroy state =
@@ -60,6 +63,11 @@ let run_roaming_mode state =
   RoamingMode.update state;
   RoamingMode.render state
 
+let run_menu_mode state =
+  MenuMode.handle_events state;
+  MenuMode.update state;
+  MenuMode.render state
+
 let main () =
   let game = init () in
   while game.is_running do
@@ -70,6 +78,9 @@ let main () =
        | None ->
            BattleMode.init game;
            run_battle_mode game)
+     else if game.action_state = Menu then (
+       MenuMode.init game;
+       run_menu_mode game)
      else
        match game.roaming_state with
        | Some _ -> run_roaming_mode game
